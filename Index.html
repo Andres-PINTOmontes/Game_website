@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EmpreStart Pro</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>EmpreStart Pro</h1>
+    <p>Simulador de emprendimiento de élite</p>
+  </header>
+  <main class="container-fluid">
+    <div class="row g-4">
+      <!-- Sidebar inicio -->
+      <div class="col-lg-2">
+        <div class="sidebar text-center">
+          <h5>Iniciar Juego</h5>
+          <input type="text" id="nombre" class="form-control mb-2" placeholder="Nombre">
+          <button id="btn-iniciar" class="btn btn-primary w-100">
+            <i class="fas fa-play me-1"></i> Comenzar
+          </button>
+        </div>
+      </div>
+      <!-- Tablero -->
+      <div class="col-lg-7">
+        <div id="board-container"></div>
+      </div>
+      <!-- Dashboard y controles -->
+      <div class="col-lg-3 d-flex flex-column">
+        <div class="sidebar mb-3" id="company-metrics"></div>
+        <div id="controls" class="sidebar">
+          <h6>Turno</h6>
+          <div class="d-flex gap-2 align-items-center">
+            <input type="number" id="dado" class="form-control" min="1" max="6" placeholder="🎲">
+            <button id="btn-turno" class="btn btn-primary flex-shrink-0">
+              <i class="fas fa-dice me-1"></i> Tirar
+            </button>
+          </div>
+          <div class="mt-3 d-flex justify-content-between">
+            <button id="btn-random-dice" class="btn btn-outline-secondary btn-sm">
+              <i class="fas fa-random"></i>
+            </button>
+            <button id="btn-clear-log" class="btn btn-outline-danger btn-sm">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Diálogos y log -->
+    <div id="dialog-container"></div>
+    <div id="output"></div>
+  </main>
+
+  <!-- Bootstrap & FontAwesome -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <!-- Lógica del juego -->
+  <script src="game.js"></script>
+</body>
+</html>
+
