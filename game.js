@@ -245,13 +245,19 @@ const efectosOpp = [
   () => {
     clearDialog();
     const html = `
-      <div class="alert alert-primary">
-        <strong>Tercerización en la Distribución</strong><br>Reduce gastos operacionales en un 2%.
-        <div class="mt-3">
-          <button id="ok-1" class="btn btn-success me-2">Tomar</button>
-          <button id="no-1" class="btn btn-secondary">Pasar</button>
-        </div>
-      </div>`;
+    <div class="alert alert-primary">
+      <img
+        src="assets/img/imagen_de_prueba.jpg"
+        alt="Imagen de prueba"
+        style="max-width:150px; display:block; margin-bottom:8px; border-radius:4px;"
+      />
+      <strong>Desarrollo de Nuevo Producto</strong><br>Avanza 1 casilla extra.
+      <div class="mt-3">
+        <button id="ok-0" class="btn btn-success me-2">Tomar</button>
+        <button id="no-0" class="btn btn-secondary">Pasar</button>
+      </div>
+    </div>`;
+
     document.getElementById('dialog-container').innerHTML = html;
     esperandoDecision = true;
     document.getElementById('ok-1').onclick = () => {
