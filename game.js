@@ -195,69 +195,40 @@ function procesarCasillaOportunidad(casilla) {
 // Array de funciones que muestran su propio diálogo y confirman antes de aplicar el efecto
 const efectosOpp = [
   // 0: Casilla 1 - Desarrollo de Nuevo Producto
-  // 0: Casilla 1 – Desarrollo de Nuevo Producto
-() => {
-  // Limpiamos cualquier diálogo anterior
-  clearDialog();
-
-  // Creamos el HTML del diálogo
-  const html = `
-    <div class="alert alert-primary">
-      <strong>Desarrollo de Nuevo Producto</strong><br>
-      Avanza 1 casilla extra.
-      <div class="mt-3">
-        <button id="ok-0" class="btn btn-success me-2">Tomar</button>
-        <button id="no-0" class="btn btn-secondary">Pasar</button>
-      </div>
-    </div>
-  `;
-
-  // Lo inyectamos en pantalla
-  document.getElementById('dialog-container').innerHTML = html;
-  esperandoDecision = true;
-
-  // Si toma la oportunidad
-  document.getElementById('ok-0').addEventListener('click', () => {
+  () => {
     clearDialog();
-    jugador.posicion++;
-    actualizarTablero();
-    showOutput(`
-      <div class="log-entry oportunidad">
-        <strong>Desarrollo de Nuevo Producto:</strong> Avanzas 1 casilla extra.
-      </div>
-    `);
-    esperandoDecision = false;
-  });
-
-  // Si pasa la oportunidad
-  document.getElementById('no-0').addEventListener('click', () => {
-    clearDialog();
-    showOutput(`
-      <div class="log-entry oportunidad-pasada">
-        <em>Oportunidad saltada.</em>
-      </div>
-    `);
-    esperandoDecision = false;
-  });
-},
-
+    const html = `
+      <div class="alert alert-primary">
+        <strong>Desarrollo de Nuevo Producto</strong><br>Avanza 1 casilla extra.
+        <div class="mt-3">
+          <button id="ok-0" class="btn btn-success me-2">Tomar</button>
+          <button id="no-0" class="btn btn-secondary">Pasar</button>
+        </div>
+      </div>`;
+    document.getElementById('dialog-container').innerHTML = html;
+    esperandoDecision = true;
+    document.getElementById('ok-0').onclick = () => {
+      clearDialog();
+      jugador.posicion++;
+      actualizarTablero();
+      showOutput('<strong>Desarrollo de Nuevo Producto:</strong> Avanzas 1 casilla extra.');
+      esperandoDecision = false;
+    };
+    document.getElementById('no-0').onclick = () => {
+      clearDialog(); showOutput('<em>Hecho: pasas oportunidad.</em>'); esperandoDecision = false;
+    };
+  },
   // 1: Casilla 4 - Tercerización en la Distribución
   () => {
     clearDialog();
     const html = `
-    <div class="alert alert-primary">
-      <img
-        src="assets/img/imagen_de_prueba.jpg"
-        alt="Imagen de prueba"
-        style="max-width:150px; display:block; margin-bottom:8px; border-radius:4px;"
-      />
-      <strong>Desarrollo de Nuevo Producto</strong><br>Avanza 1 casilla extra.
-      <div class="mt-3">
-        <button id="ok-0" class="btn btn-success me-2">Tomar</button>
-        <button id="no-0" class="btn btn-secondary">Pasar</button>
-      </div>
-    </div>`;
-
+      <div class="alert alert-primary">
+        <strong>Tercerización en la Distribución</strong><br>Reduce gastos operacionales en un 2%.
+        <div class="mt-3">
+          <button id="ok-1" class="btn btn-success me-2">Tomar</button>
+          <button id="no-1" class="btn btn-secondary">Pasar</button>
+        </div>
+      </div>`;
     document.getElementById('dialog-container').innerHTML = html;
     esperandoDecision = true;
     document.getElementById('ok-1').onclick = () => {
@@ -933,3 +904,4 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
   document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
 });
+
