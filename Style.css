@@ -13,7 +13,7 @@
 }
 body {
   font-family: 'Inter', sans-serif;
-  background: var(--secondary);
+  /*background: var(--secondary);*/
   color: var(--text);
   line-height: 1.5;
   background: url("assets/img/fondo.jpg") no-repeat center center fixed;
