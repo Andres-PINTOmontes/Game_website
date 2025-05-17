@@ -312,8 +312,9 @@ const efectosOpp = [
     const html = `<div class="alert alert-primary"><strong>Concurso Empresarial</strong><br>Pierdes 1 turno y -15% costo producción.<div class="mt-3"><button id="ok-4" class="btn btn-success me-2">Tomar</button><button id="no-4" class="btn btn-secondary">Pasar</button></div></div>`;
     document.getElementById('dialog-container').innerHTML = html;
     esperandoDecision = true;
-    document.getElementById('ok-4').onclick = () => { clearDialog(); jugador.turnosPerdidos++; jugador.empresa.costoProduccion=Math.floor(jugador.empresa.costoProduccion*0.85); actualizarEmpresaDashboard(); showOutput('<strong>Concurso:</strong> -15% costo producción.'); esperandoDecision=false; };
-    document.getElementById('no-4').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision=false; };
+    document.getElementById('ok-4').onclick = () => { clearDialog(); jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 0.85); actualizarEmpresaDashboard(); showOutput('<strong>Concurso:</strong> -15% costo producción.'); esperandoDecision = false; };
+    document.getElementById('no-4').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
+
   },
     // 5: Casilla 17 - Investigación y Desarrollo
   () => {
