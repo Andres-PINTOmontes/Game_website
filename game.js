@@ -309,7 +309,7 @@ const efectosOpp = [
   // 4: Casilla 13
   () => {
     clearDialog();
-    const html = `<div class="alert alert-primary"><strong>Concurso Empresarial</strong><br>Pierdes 1 turno y -15% costo producción.<div class="mt-3"><button id="ok-4" class="btn btn-success me-2">Tomar</button><button id="no-4" class="btn btn-secondary">Pasar</button></div></div>`;
+    const html = `<div class="alert alert-primary"><strong>Concurso Empresarial</strong><br> -15% Costo producción.<div class="mt-3"><button id="ok-4" class="btn btn-success me-2">Tomar</button><button id="no-4" class="btn btn-secondary">Pasar</button></div></div>`;
     document.getElementById('dialog-container').innerHTML = html;
     esperandoDecision = true;
     document.getElementById('ok-4').onclick = () => { clearDialog(); jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 0.85); actualizarEmpresaDashboard(); showOutput('<strong>Concurso:</strong> -15% costo producción.'); esperandoDecision = false; };
