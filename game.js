@@ -195,15 +195,19 @@ function procesarCasillaOportunidad(casilla) {
 
 // Array de funciones que muestran su propio diálogo y confirman antes de aplicar el efecto
 const efectosOpp = [
-  // 0: Casilla 1 - Desarrollo de Nuevo Producto
+  // 0: Casilla 1 - Tendencia Viral en Redes Sociales
   () => {
     clearDialog();
     const html = `
       <div class="alert alert-primary">
-        <strong>Desarrollo de Nuevo Producto</strong><br>Avanza 1 casilla extra.
+        <strong>CASILLA 1: Tendencia Viral en Redes Sociales</strong><br>
+        <em>Un influencer menciona tu producto en redes sociales sin costo alguno, y esto genera un aumento explosivo de visibilidad.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Efecto:</b> Recibes ingresos normales y avanzas una casilla extra.</li>
+          <li><b>Costos:</b> N.A</li>
+        </ul>
         <div class="mt-3">
-          <button id="ok-0" class="btn btn-success me-2">Tomar</button>
-          <button id="no-0" class="btn btn-secondary">Pasar</button>
+          <button id="ok-0" class="btn btn-success me-2">Tomar efecto</button>
         </div>
       </div>`;
     document.getElementById('dialog-container').innerHTML = html;
@@ -212,11 +216,12 @@ const efectosOpp = [
       clearDialog();
       jugador.posicion++;
       actualizarTablero();
-      showOutput('<strong>Desarrollo de Nuevo Producto:</strong> Avanzas 1 casilla extra.');
+      showOutput(
+        `<strong>Tendencia Viral en Redes Sociales:</strong><br>
+        Un influencer menciona tu producto en redes sociales sin costo alguno, y esto genera un aumento explosivo de visibilidad.<br>
+        <b>¡Avanzas una casilla extra y recibes ingresos!</b>`
+      );
       esperandoDecision = false;
-    };
-    document.getElementById('no-0').onclick = () => {
-      clearDialog(); showOutput('<em>Hecho: pasas oportunidad.</em>'); esperandoDecision = false;
     };
   },
   // 1: Casilla 4 - Tercerización en la Distribución
@@ -901,6 +906,18 @@ const efectosAmen = [
   }
 ];
 
+function procesarCasillaOportunidad(cas){esperandoDecision=false;clearDialog();efectosOpp[cas.indiceEfecto]();actualizarEmpresaDashboard();}
+function procesarCasillaAmenaza(cas){esperandoDecision=false;clearDialog();efectosAmen[cas.indiceEfecto]();actualizarEmpresaDashboard();}
+
+// --- DOM Ready ---
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('btn-iniciar').addEventListener('click',initJuego);
+  document.getElementById('btn-turno').addEventListener('click',turno);
+
+  // Si tienes los botones de dado aleatorio y limpiar log, descomenta estas líneas:
+  // document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
+  // document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
+});
 function procesarCasillaOportunidad(cas){esperandoDecision=false;clearDialog();efectosOpp[cas.indiceEfecto]();actualizarEmpresaDashboard();}
 function procesarCasillaAmenaza(cas){esperandoDecision=false;clearDialog();efectosAmen[cas.indiceEfecto]();actualizarEmpresaDashboard();}
 
