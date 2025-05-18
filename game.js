@@ -269,7 +269,7 @@ const efectosOpp = [
     };
   },
 
-  // 2: Casilla 7 - Branding de la marca (nuevo efecto: ingreso inmediato y pequeño bonus)
+  // 2: Casilla 7 - Branding de la marca (ahora con más riesgo)
   () => {
     clearDialog();
     const html = `
@@ -278,7 +278,7 @@ const efectosOpp = [
         <em>El posicionamiento de tu marca requiere que hagas una estrategia de branding. Para esto debes invertir $8,000.</em>
         <ul class="mt-2 mb-2">
           <li><b>Condición:</b> Requiere invertir $8,000</li>
-          <li><b>Efecto:</b> Recibes $12,000 por nueva visibilidad y puedes lanzar un dado: si sale 5 o 6, recibes $5,000 extra.</li>
+          <li><b>Efecto:</b> Recibes $12,000 por nueva visibilidad y puedes lanzar un dado: si sale 5 o 6, recibes $5,000 extra; si sale 1, pierdes $4,000 adicionales.</li>
         </ul>
         <div class="mt-3">
           <button id="ok-2" class="btn btn-success me-2">Invertir</button>
@@ -294,7 +294,7 @@ const efectosOpp = [
         jugador.empresa.actualizarIngresos(12000);
         document.getElementById('dialog-container').innerHTML = `
           <div class="alert alert-info">
-            Lanza un dado (1-6) para ver si obtienes un bonus:<br>
+            Lanza un dado (1-6) para ver si obtienes un bonus o una penalización:<br>
             <input id="dado-bonus7" type="number" min="1" max="6" class="form-control w-auto d-inline-block" style="width:80px;display:inline-block;" placeholder="Dado">
             <button id="conf-bonus7" class="btn btn-primary mt-2">Confirmar</button>
           </div>`;
@@ -304,6 +304,9 @@ const efectosOpp = [
           if (val === 5 || val === 6) {
             jugador.empresa.actualizarIngresos(5000);
             showOutput('<strong>Branding:</strong> Recibes $12,000 y un bonus de $5,000 por excelente visibilidad.');
+          } else if (val === 1) {
+            jugador.empresa.pagarGastos(4000);
+            showOutput('<strong>Branding:</strong> Recibes $12,000 pero pierdes $4,000 por mala campaña.');
           } else {
             showOutput('<strong>Branding:</strong> Recibes $12,000 por nueva visibilidad.');
           }
@@ -537,7 +540,7 @@ const efectosOpp = [
       esperandoDecision = false;
     };
   },
-  // 8: Casilla 26 - Participación en feria de emprendimiento (nuevo efecto: ingreso inmediato y posible gasto extra)
+  // 8: Casilla 26 - Participación en feria de emprendimiento (más riesgo)
   () => {
     clearDialog();
     const html = `
@@ -546,7 +549,7 @@ const efectosOpp = [
         <em>Tu empresa fue seleccionada para participar en una feria local. Allí logras nuevos contactos y oportunidades comerciales.</em>
         <ul class="mt-2 mb-2">
           <li><b>Condición:</b> Debes invertir $10,000 en el evento</li>
-          <li><b>Efecto:</b> Recibes $18,000 por nuevos clientes, pero lanza un dado: si sale 1 o 2, pagas $5,000 extra por imprevistos.</li>
+          <li><b>Efecto:</b> Recibes $18,000 por nuevos clientes, pero lanza un dado: si sale 1 o 2, pagas $5,000 extra por imprevistos; si sale 6, pierdes un turno por agotamiento.</li>
         </ul>
         <div class="mt-3">
           <button id="ok-8" class="btn btn-success me-2">Invertir</button>
@@ -562,7 +565,7 @@ const efectosOpp = [
         jugador.empresa.actualizarIngresos(18000);
         document.getElementById('dialog-container').innerHTML = `
           <div class="alert alert-info">
-            Lanza un dado (1-6) para ver si tienes gastos imprevistos:<br>
+            Lanza un dado (1-6) para ver si tienes gastos imprevistos o pierdes un turno:<br>
             <input id="dado-feria" type="number" min="1" max="6" class="form-control w-auto d-inline-block" style="width:80px;display:inline-block;" placeholder="Dado">
             <button id="conf-feria" class="btn btn-primary mt-2">Confirmar</button>
           </div>`;
@@ -572,6 +575,9 @@ const efectosOpp = [
           if (val === 1 || val === 2) {
             jugador.empresa.pagarGastos(5000);
             showOutput('<strong>Feria:</strong> Recibes $18,000 pero pagas $5,000 extra por imprevistos.');
+          } else if (val === 6) {
+            jugador.turnosPerdidos += 1;
+            showOutput('<strong>Feria:</strong> Recibes $18,000 pero pierdes un turno por agotamiento.');
           } else {
             showOutput('<strong>Feria:</strong> Recibes $18,000 por nuevos clientes.');
           }
@@ -733,7 +739,7 @@ const efectosOpp = [
       esperandoDecision = false;
     };
   },
-  // 13: Casilla 45 - Aumento de Capital por Inversores
+  // 13: Casilla 45 - Aumento de Capital por Inversores (ahora con riesgo)
   () => {
     clearDialog();
     const html = `
@@ -742,7 +748,7 @@ const efectosOpp = [
         <em>Lograste convencer a unos inversores para que aporten capital a cambio de un pequeño porcentaje de tu empresa.</em>
         <ul class="mt-2 mb-2">
           <li><b>Condición:</b> N.A</li>
-          <li><b>Efecto:</b> Aumenta tu balance en $30,000.</li>
+          <li><b>Efecto:</b> Lanza un dado: 1-2 los inversores se retiran y pierdes $10,000; 3-6 tu balance aumenta en $30,000.</li>
         </ul>
         <div class="mt-3">
           <button id="ok-13" class="btn btn-success me-2">Aceptar</button>
@@ -752,12 +758,28 @@ const efectosOpp = [
     esperandoDecision = true;
     document.getElementById('ok-13').onclick = () => {
       clearDialog();
-      jugador.empresa.balance += 30000;
-      actualizarEmpresaDashboard();
-      showOutput('<strong>Aumento de Capital:</strong> Tu balance aumenta en $30,000.');
-      esperandoDecision = false;
+      document.getElementById('dialog-container').innerHTML = `
+        <div class="alert alert-info">
+          Lanza un dado (1-6) para ver si los inversores cumplen:<br>
+          <input id="dado-inv" type="number" min="1" max="6" class="form-control w-auto d-inline-block" style="width:80px;display:inline-block;" placeholder="Dado">
+          <button id="conf-inv" class="btn btn-primary mt-2">Confirmar</button>
+        </div>`;
+      document.getElementById('conf-inv').onclick = () => {
+        const val = parseInt(document.getElementById('dado-inv').value);
+        clearDialog();
+        if (val === 1 || val === 2) {
+          jugador.empresa.pagarGastos(10000);
+          showOutput('<strong>Inversores:</strong> Los inversores se retiran y pierdes $10,000.');
+        } else {
+          jugador.empresa.balance += 30000;
+          showOutput('<strong>Aumento de Capital:</strong> Tu balance aumenta en $30,000.');
+        }
+        actualizarEmpresaDashboard();
+        esperandoDecision = false;
+      };
     };
   },
+
   // 14: Casilla 48 - Subvención Gubernamental
   () => {
     clearDialog();
@@ -1081,5 +1103,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   // document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
   // document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
 });
+
+
 
 
