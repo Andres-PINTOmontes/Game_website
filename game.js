@@ -933,8 +933,25 @@ const efectosOpp = [
 const efectosAmen = [
   // Casilla 3: Inspección Fiscal. Pierdes 2 turnos.
   () => {
-    jugador.turnosPerdidos += 2;
-    showOutput(`<strong>Inspección Fiscal</strong><br>Pierdes 2 turnos.`);
+    clearDialog();
+    document.getElementById('dialog-container').innerHTML = `
+      <div class="alert alert-danger">
+        <strong>CASILLA 3: Inspección Fiscal</strong><br>
+        <em>Una inspección fiscal inesperada detiene tus operaciones.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Efecto:</b> Pierdes 2 turnos.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-amen-0" class="btn btn-danger">Aceptar efecto</button>
+        </div>
+      </div>`;
+    esperandoDecision = true;
+    document.getElementById('ok-amen-0').onclick = () => {
+      jugador.turnosPerdidos += 2;
+      clearDialog();
+      showOutput(`<strong>Inspección Fiscal</strong><br>Pierdes 2 turnos.`);
+      esperandoDecision = false;
+    };
   },
   // Casilla 6: Retraso Logístico. Retrocedes 1 casilla. (panel visual)
   () => {
@@ -992,28 +1009,67 @@ const efectosAmen = [
   },
   // Casilla 12: Fallo en el Sistema de Ventas. Pierdes 5% de bonificaciones de ventas por 2 rondas.
   () => {
-    jugador.empresa.bonificacionVentas *= 0.95;
-    jugador.empresa.rondasBonificacion = Math.max(jugador.empresa.rondasBonificacion, 2);
-    actualizarEmpresaDashboard();
-    showOutput(`<strong>Fallo en Sistema de Ventas</strong><br>Pierdes 5% de bonificaciones x2 rondas.`);
+    clearDialog();
+    document.getElementById('dialog-container').innerHTML = `
+      <div class="alert alert-danger">
+        <strong>CASILLA 12: Fallo en el Sistema de Ventas</strong><br>
+        <em>Un fallo en el sistema de ventas afecta tus bonificaciones.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Efecto:</b> Pierdes 5% de bonificaciones de ventas por 2 rondas.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-amen-3" class="btn btn-danger">Aceptar efecto</button>
+        </div>
+      </div>`;
+    esperandoDecision = true;
+    document.getElementById('ok-amen-3').onclick = () => {
+      jugador.empresa.bonificacionVentas *= 0.95;
+      jugador.empresa.rondasBonificacion = Math.max(jugador.empresa.rondasBonificacion, 2);
+      actualizarEmpresaDashboard();
+      clearDialog();
+      showOutput(`<strong>Fallo en Sistema de Ventas</strong><br>Pierdes 5% de bonificaciones x2 rondas.`);
+      esperandoDecision = false;
+    };
   },
   // Casilla 15: Paro de Producción. Retrocedes 1 casilla y bonificaciones limitadas por 4 rondas.
   () => {
-    jugador.casilla = Math.max(0, jugador.casilla - 1);
-    jugador.empresa.limiteBonificaciones = 4;
-    actualizarTablero();
-    actualizarEmpresaDashboard();
-    showOutput(`<strong>Paro de Producción</strong><br>Retrocedes 1 casilla y bonificaciones limitadas por 4 rondas.`);
+    clearDialog();
+    document.getElementById('dialog-container').innerHTML = `
+      <div class="alert alert-danger">
+        <strong>CASILLA 15: Paro de Producción</strong><br>
+        <em>Un paro inesperado detiene la producción y limita tus bonificaciones.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Efecto:</b> Retrocedes 1 casilla y bonificaciones limitadas por 4 rondas.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-amen-4" class="btn btn-danger">Aceptar efecto</button>
+        </div>
+      </div>`;
+    esperandoDecision = true;
+    document.getElementById('ok-amen-4').onclick = () => {
+      jugador.casilla = Math.max(0, jugador.casilla - 1);
+      jugador.empresa.limiteBonificaciones = 4;
+      actualizarTablero();
+      actualizarEmpresaDashboard();
+      clearDialog();
+      showOutput(`<strong>Paro de Producción</strong><br>Retrocedes 1 casilla y bonificaciones limitadas por 4 rondas.`);
+      esperandoDecision = false;
+    };
   },
   // Casilla 19: Normativas y Regulaciones. Lanza un dado; +5% costo producción por cada punto.
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
-      <div class="alert alert-warning">
-        <strong>Normativas y Regulaciones</strong><br>
-        Ingresa el resultado de tu dado físico:<br>
-        <input type="number" id="dreg" class="form-control mb-2" min="1" max="6" placeholder="Dado">
-        <button id="conf-reg" class="btn btn-primary">Confirmar</button>
+      <div class="alert alert-danger">
+        <strong>CASILLA 19: Normativas y Regulaciones</strong><br>
+        <em>Nuevas normativas aumentan tus costos de producción.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Efecto:</b> Lanza un dado; +5% costo producción por cada punto.</li>
+        </ul>
+        <div class="mt-3">
+          <input type="number" id="dreg" class="form-control mb-2" min="1" max="6" placeholder="Dado">
+          <button id="conf-reg" class="btn btn-danger">Confirmar</button>
+        </div>
       </div>`;
     esperandoDecision = true;
     document.getElementById('conf-reg').onclick = () => {
@@ -1028,59 +1084,167 @@ const efectosAmen = [
   },
   // Casilla 22: Sanción por Incumplimiento. Retrocedes 2 casillas y pierdes 2 turnos.
   () => {
-    jugador.casilla = Math.max(0, jugador.casilla - 2);
-    jugador.turnosPerdidos += 2;
-    actualizarTablero();
-    actualizarEmpresaDashboard();
-    showOutput(`<strong>Sanción por Incumplimiento</strong><br>Retrocedes 2 casillas y pierdes 2 turnos.`);
+    clearDialog();
+    document.getElementById('dialog-container').innerHTML = `
+      <div class="alert alert-danger">
+        <strong>CASILLA 22: Sanción por Incumplimiento</strong><br>
+        <em>Una sanción por incumplimiento afecta tu avance y operaciones.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Efecto:</b> Retrocedes 2 casillas y pierdes 2 turnos.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-amen-6" class="btn btn-danger">Aceptar efecto</button>
+        </div>
+      </div>`;
+    esperandoDecision = true;
+    document.getElementById('ok-amen-6').onclick = () => {
+      jugador.casilla = Math.max(0, jugador.casilla - 2);
+      jugador.turnosPerdidos += 2;
+      actualizarTablero();
+      actualizarEmpresaDashboard();
+      clearDialog();
+      showOutput(`<strong>Sanción por Incumplimiento</strong><br>Retrocedes 2 casillas y pierdes 2 turnos.`);
+      esperandoDecision = false;
+    };
   },
   // Casilla 25: Competencia Desleal. Pierdes 5% de margen de ganancia.
   () => {
-    jugador.empresa.margenGanancia *= 0.95;
-    actualizarEmpresaDashboard();
-    showOutput(`<strong>Competencia Desleal</strong><br>Margen de ganancia -5%.`);
+    clearDialog();
+    document.getElementById('dialog-container').innerHTML = `
+      <div class="alert alert-danger">
+        <strong>CASILLA 25: Competencia Desleal</strong><br>
+        <em>Un competidor desleal afecta tus márgenes de ganancia.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Efecto:</b> Pierdes 5% de margen de ganancia.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-amen-7" class="btn btn-danger">Aceptar efecto</button>
+        </div>
+      </div>`;
+    esperandoDecision = true;
+    document.getElementById('ok-amen-7').onclick = () => {
+      jugador.empresa.margenGanancia *= 0.95;
+      actualizarEmpresaDashboard();
+      clearDialog();
+      showOutput(`<strong>Competencia Desleal</strong><br>Margen de ganancia -5%.`);
+      esperandoDecision = false;
+    };
   },
   // Casilla 28: Aumento de Materia Prima. Aumenta +5% costo producción.
   () => {
-    jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 1.05);
-    actualizarEmpresaDashboard();
-    showOutput(`<strong>Aumento de Materia Prima</strong><br>Costo de producción +5%.`);
+    clearDialog();
+    document.getElementById('dialog-container').innerHTML = `
+      <div class="alert alert-danger">
+        <strong>CASILLA 28: Aumento de Materia Prima</strong><br>
+        <em>El precio de la materia prima sube inesperadamente.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Efecto:</b> Costo de producción +5%.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-amen-8" class="btn btn-danger">Aceptar efecto</button>
+        </div>
+      </div>`;
+    esperandoDecision = true;
+    document.getElementById('ok-amen-8').onclick = () => {
+      jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 1.05);
+      actualizarEmpresaDashboard();
+      clearDialog();
+      showOutput(`<strong>Aumento de Materia Prima</strong><br>Costo de producción +5%.`);
+      esperandoDecision = false;
+    };
   },
   // Casilla 31: Problema de Calidad. Retrocedes 2 casillas.
   () => {
-    jugador.casilla = Math.max(0, jugador.casilla - 2);
-    actualizarTablero();
-    actualizarEmpresaDashboard();
-    showOutput(`<strong>Problema de Calidad</strong><br>Retrocedes 2 casillas.`);
+    clearDialog();
+    document.getElementById('dialog-container').innerHTML = `
+      <div class="alert alert-danger">
+        <strong>CASILLA 31: Problema de Calidad</strong><br>
+        <em>Un problema de calidad obliga a retirar productos del mercado.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Efecto:</b> Retrocedes 2 casillas.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-amen-9" class="btn btn-danger">Aceptar efecto</button>
+        </div>
+      </div>`;
+    esperandoDecision = true;
+    document.getElementById('ok-amen-9').onclick = () => {
+      jugador.casilla = Math.max(0, jugador.casilla - 2);
+      actualizarTablero();
+      actualizarEmpresaDashboard();
+      clearDialog();
+      showOutput(`<strong>Problema de Calidad</strong><br>Retrocedes 2 casillas.`);
+      esperandoDecision = false;
+    };
   },
   // Casilla 35: Incendio en Planta. Retrocedes 3 casillas y pierdes 3 turnos.
   () => {
-    jugador.casilla = Math.max(0, jugador.casilla - 3);
-    jugador.turnosPerdidos += 3;
-    actualizarTablero();
-    actualizarEmpresaDashboard();
-    showOutput(`<strong>Incendio en Planta</strong><br>Retrocedes 3 casillas y pierdes 3 turnos.`);
+    clearDialog();
+    document.getElementById('dialog-container').innerHTML = `
+      <div class="alert alert-danger">
+        <strong>CASILLA 35: Incendio en Planta</strong><br>
+        <em>Un incendio en la planta detiene la producción y te hace retroceder.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Efecto:</b> Retrocedes 3 casillas y pierdes 3 turnos.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-amen-10" class="btn btn-danger">Aceptar efecto</button>
+        </div>
+      </div>`;
+    esperandoDecision = true;
+    document.getElementById('ok-amen-10').onclick = () => {
+      jugador.casilla = Math.max(0, jugador.casilla - 3);
+      jugador.turnosPerdidos += 3;
+      actualizarTablero();
+      actualizarEmpresaDashboard();
+      clearDialog();
+      showOutput(`<strong>Incendio en Planta</strong><br>Retrocedes 3 casillas y pierdes 3 turnos.`);
+      esperandoDecision = false;
+    };
   },
   // Casilla 38: Fraude Interno. Pierdes USD 30,000 de ingresos netos.
   () => {
-    if (jugador.empresa.ingresoNeto >= 30000) {
-      jugador.empresa.pagarGastos(30000);
-      actualizarEmpresaDashboard();
-      showOutput(`<strong>Fraude Interno</strong><br>Pierdes $30,000.`);
-    } else {
-      showOutput(`<strong>Fraude Interno</strong><br>No puedes cubrir $30,000. ¡GAME OVER!`);
-      gameOver = true;
-    }
+    clearDialog();
+    document.getElementById('dialog-container').innerHTML = `
+      <div class="alert alert-danger">
+        <strong>CASILLA 38: Fraude Interno</strong><br>
+        <em>Un fraude interno genera grandes pérdidas económicas.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Efecto:</b> Pierdes $30,000 de ingresos netos.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-amen-11" class="btn btn-danger">Aceptar efecto</button>
+        </div>
+      </div>`;
+    esperandoDecision = true;
+    document.getElementById('ok-amen-11').onclick = () => {
+      if (jugador.empresa.ingresoNeto >= 30000) {
+        jugador.empresa.pagarGastos(30000);
+        actualizarEmpresaDashboard();
+        clearDialog();
+        showOutput(`<strong>Fraude Interno</strong><br>Pierdes $30,000.`);
+      } else {
+        clearDialog();
+        showOutput(`<strong>Fraude Interno</strong><br>No puedes cubrir $30,000. ¡GAME OVER!`);
+        gameOver = true;
+      }
+      esperandoDecision = false;
+    };
   },
   // Casilla 41: Avería de Maquinaria. Lanza un dado; retrocedes ese número y pagas $10,000 por casilla.
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-danger">
-        <strong>Avería de Maquinaria</strong><br>
-        Ingresa el resultado de tu dado físico:<br>
-        <input type="number" id="dav" class="form-control mb-2" min="1" max="6" placeholder="Dado">
-        <button id="conf-av" class="btn btn-primary">Confirmar</button>
+        <strong>CASILLA 41: Avería de Maquinaria</strong><br>
+        <em>Una avería grave te obliga a retroceder y pagar reparaciones.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Efecto:</b> Lanza un dado; retrocedes ese número y pagas $10,000 por casilla.</li>
+        </ul>
+        <div class="mt-3">
+          <input type="number" id="dav" class="form-control mb-2" min="1" max="6" placeholder="Dado">
+          <button id="conf-av" class="btn btn-danger">Confirmar</button>
+        </div>
       </div>`;
     esperandoDecision = true;
     document.getElementById('conf-av').onclick = () => {
@@ -1088,61 +1252,187 @@ const efectosAmen = [
       if (isNaN(v) || v < 1 || v > 6) return alert('Ingresa un valor entre 1 y 6.');
       jugador.casilla = Math.max(0, jugador.casilla - v);
       const costo = v * 10000;
-      if (!jugador.empresa.pagarGastos(costo)) { showOutput('No tienes para pagar reparaciones. ¡GAME OVER!'); gameOver = true; }
-      else { actualizarEmpresaDashboard(); showOutput(`<strong>Avería de Maquinaria</strong><br>Retrocedes ${v} casillas y pagas $${costo}.`); }
+      if (!jugador.empresa.pagarGastos(costo)) {
+        clearDialog();
+        showOutput('No tienes para pagar reparaciones. ¡GAME OVER!');
+        gameOver = true;
+      } else {
+        actualizarEmpresaDashboard();
+        clearDialog();
+        showOutput(`<strong>Avería de Maquinaria</strong><br>Retrocedes ${v} casillas y pagas $${costo}.`);
+      }
       actualizarTablero();
       esperandoDecision = false;
     };
   },
   // Casilla 44: Pérdida de Contrato. Pierdes 10% de tus ingresos netos.
   () => {
-    const ded = Math.floor(jugador.empresa.ingresoNeto * 0.10);
-    jugador.empresa.ingresoNeto -= ded;
-    jugador.empresa.balance -= ded;
-    actualizarEmpresaDashboard();
-    showOutput(`<strong>Pérdida de Contrato</strong><br>Pierdes 10% ingresos netos: -$${ded}.`);
+    clearDialog();
+    document.getElementById('dialog-container').innerHTML = `
+      <div class="alert alert-danger">
+        <strong>CASILLA 44: Pérdida de Contrato</strong><br>
+        <em>Un contrato importante se pierde, afectando tus ingresos.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Efecto:</b> Pierdes 10% de tus ingresos netos.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-amen-14" class="btn btn-danger">Aceptar efecto</button>
+        </div>
+      </div>`;
+    esperandoDecision = true;
+    document.getElementById('ok-amen-14').onclick = () => {
+      const ded = Math.floor(jugador.empresa.ingresoNeto * 0.10);
+      jugador.empresa.ingresoNeto -= ded;
+      jugador.empresa.balance -= ded;
+      actualizarEmpresaDashboard();
+      clearDialog();
+      showOutput(`<strong>Pérdida de Contrato</strong><br>Pierdes 10% ingresos netos: -$${ded}.`);
+      esperandoDecision = false;
+    };
   },
   // Casilla 47: Inflación. Aumenta +15% costo producción.
   () => {
-    jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 1.15);
-    actualizarEmpresaDashboard();
-    showOutput(`<strong>Inflación</strong><br>Costo de producción +15%.`);
+    clearDialog();
+    document.getElementById('dialog-container').innerHTML = `
+      <div class="alert alert-danger">
+        <strong>CASILLA 47: Inflación</strong><br>
+        <em>La inflación impacta tus costos de producción.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Efecto:</b> Costo de producción +15%.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-amen-15" class="btn btn-danger">Aceptar efecto</button>
+        </div>
+      </div>`;
+    esperandoDecision = true;
+    document.getElementById('ok-amen-15').onclick = () => {
+      jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 1.15);
+      actualizarEmpresaDashboard();
+      clearDialog();
+      showOutput(`<strong>Inflación</strong><br>Costo de producción +15%.`);
+      esperandoDecision = false;
+    };
   },
   // Casilla 51: Multa por Incumplimiento. Pierdes 15% ingresos netos y 1 turno.
   () => {
-    const ded = Math.floor(jugador.empresa.ingresoNeto * 0.15);
-    jugador.empresa.ingresoNeto -= ded;
-    jugador.empresa.balance -= ded;
-    jugador.turnosPerdidos++;
-    actualizarEmpresaDashboard();
-    showOutput(`<strong>Multa por Incumplimiento</strong><br>Pierdes 15% ingresos netos (-$${ded}) y 1 turno.`);
+    clearDialog();
+    document.getElementById('dialog-container').innerHTML = `
+      <div class="alert alert-danger">
+        <strong>CASILLA 51: Multa por Incumplimiento</strong><br>
+        <em>Una multa por incumplimiento afecta tus finanzas y operaciones.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Efecto:</b> Pierdes 15% ingresos netos y 1 turno.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-amen-16" class="btn btn-danger">Aceptar efecto</button>
+        </div>
+      </div>`;
+    esperandoDecision = true;
+    document.getElementById('ok-amen-16').onclick = () => {
+      const ded = Math.floor(jugador.empresa.ingresoNeto * 0.15);
+      jugador.empresa.ingresoNeto -= ded;
+      jugador.empresa.balance -= ded;
+      jugador.turnosPerdidos++;
+      actualizarEmpresaDashboard();
+      clearDialog();
+      showOutput(`<strong>Multa por Incumplimiento</strong><br>Pierdes 15% ingresos netos (-$${ded}) y 1 turno.`);
+      esperandoDecision = false;
+    };
   },
   // Casilla 54: Cancelación de Campaña. Pierdes 10% de bonificaciones de ventas.
   () => {
-    jugador.empresa.bonificacionVentas *= 0.90;
-    actualizarEmpresaDashboard();
-    showOutput(`<strong>Cancelación de Campaña</strong><br>Pierdes 10% de tus bonificaciones de ventas.`);
+    clearDialog();
+    document.getElementById('dialog-container').innerHTML = `
+      <div class="alert alert-danger">
+        <strong>CASILLA 54: Cancelación de Campaña</strong><br>
+        <em>Una campaña importante es cancelada, afectando tus bonificaciones.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Efecto:</b> Pierdes 10% de bonificaciones de ventas.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-amen-17" class="btn btn-danger">Aceptar efecto</button>
+        </div>
+      </div>`;
+    esperandoDecision = true;
+    document.getElementById('ok-amen-17').onclick = () => {
+      jugador.empresa.bonificacionVentas *= 0.90;
+      actualizarEmpresaDashboard();
+      clearDialog();
+      showOutput(`<strong>Cancelación de Campaña</strong><br>Pierdes 10% de tus bonificaciones de ventas.`);
+      esperandoDecision = false;
+    };
   },
   // Casilla 57: Subida de Costes Energéticos. Aumenta +10% costo producción.
   () => {
-    jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 1.10);
-    actualizarEmpresaDashboard();
-    showOutput(`<strong>Costes Energéticos</strong><br>Costo de producción +10%.`);
+    clearDialog();
+    document.getElementById('dialog-container').innerHTML = `
+      <div class="alert alert-danger">
+        <strong>CASILLA 57: Subida de Costes Energéticos</strong><br>
+        <em>El aumento de los costes energéticos impacta tu producción.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Efecto:</b> Costo de producción +10%.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-amen-18" class="btn btn-danger">Aceptar efecto</button>
+        </div>
+      </div>`;
+    esperandoDecision = true;
+    document.getElementById('ok-amen-18').onclick = () => {
+      jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 1.10);
+      actualizarEmpresaDashboard();
+      clearDialog();
+      showOutput(`<strong>Costes Energéticos</strong><br>Costo de producción +10%.`);
+      esperandoDecision = false;
+    };
   },
   // Casilla 60: Crisis Mayor. Pierdes 2 turnos y retrocedes al inicio.
   () => {
-    jugador.casilla = 0;
-    jugador.turnosPerdidos += 2;
-    actualizarTablero();
-    actualizarEmpresaDashboard();
-    showOutput(`<strong>Crisis Mayor</strong><br>Pierdes 2 turnos y vuelves al inicio.`);
+    clearDialog();
+    document.getElementById('dialog-container').innerHTML = `
+      <div class="alert alert-danger">
+        <strong>CASILLA 60: Crisis Mayor</strong><br>
+        <em>Una crisis mayor te obliga a volver al inicio y perder turnos.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Efecto:</b> Pierdes 2 turnos y vuelves al inicio.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-amen-19" class="btn btn-danger">Aceptar efecto</button>
+        </div>
+      </div>`;
+       esperandoDecision = true;
+    document.getElementById('ok-amen-19').onclick = () => {
+      jugador.casilla = 0;
+      jugador.turnosPerdidos += 2;
+      actualizarTablero();
+      actualizarEmpresaDashboard();
+      clearDialog();
+      showOutput(`<strong>Crisis Mayor</strong><br>Pierdes 2 turnos y vuelves al inicio.`);
+      esperandoDecision = false;
+    };
   },
   // Casilla 63: Devaluación de Activos. Pierdes 10% margen de ganancia y 1 turno.
   () => {
-    jugador.empresa.margenGanancia *= 0.90;
-    jugador.turnosPerdidos++;
-    actualizarEmpresaDashboard();
-    showOutput(`<strong>Devaluación de Activos</strong><br>Pierdes 10% margen de ganancia y 1 turno.`);
+    clearDialog();
+    document.getElementById('dialog-container').innerHTML = `
+      <div class="alert alert-danger">
+        <strong>CASILLA 63: Devaluación de Activos</strong><br>
+        <em>Una devaluación de activos afecta tu margen y operaciones.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Efecto:</b> Pierdes 10% margen de ganancia y 1 turno.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-amen-20" class="btn btn-danger">Aceptar efecto</button>
+        </div>
+      </div>`;
+    esperandoDecision = true;
+    document.getElementById('ok-amen-20').onclick = () => {
+      jugador.empresa.margenGanancia *= 0.90;
+      jugador.turnosPerdidos++;
+      actualizarEmpresaDashboard();
+      clearDialog();
+      showOutput(`<strong>Devaluación de Activos</strong><br>Pierdes 10% margen de ganancia y 1 turno.`);
+      esperandoDecision = false;
+    };
   }
 ];
 
