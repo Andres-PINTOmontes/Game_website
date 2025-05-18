@@ -905,3 +905,4 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
   document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
 });
+
