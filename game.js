@@ -1231,15 +1231,15 @@ const efectosAmen = [
       esperandoDecision = false;
     };
   },
-  // Casilla 41: Avería de Maquinaria. Lanza un dado; retrocedes ese número y pagas $10,000 por casilla.
+  // Casilla 41: MAQUINARIA DAÑADA. Lanza un dado. Retrocedes ese número y pagas $12.000 por cada una.
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-danger">
-        <strong>CASILLA 41: Avería de Maquinaria</strong><br>
-        <em>Una avería grave te obliga a retroceder y pagar reparaciones.</em>
+        <strong>CASILLA 41: MAQUINARIA DAÑADA</strong><br>
+        <em>Uno de los equipos clave ya es obsoleto. Requiere reemplazo urgente.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Lanza un dado; retrocedes ese número y pagas $10,000 por casilla.</li>
+          <li><b>Efecto:</b> Lanza un dado. Retrocedes ese número de casillas y pagas $12.000 por cada una como penalización por la reparación y retraso.</li>
         </ul>
         <div class="mt-3">
           <input type="number" id="dav" class="form-control mb-2" min="1" max="6" placeholder="Dado">
@@ -1251,29 +1251,29 @@ const efectosAmen = [
       const v = parseInt(document.getElementById('dav').value);
       if (isNaN(v) || v < 1 || v > 6) return alert('Ingresa un valor entre 1 y 6.');
       jugador.casilla = Math.max(0, jugador.casilla - v);
-      const costo = v * 10000;
+      const costo = v * 12000;
       if (!jugador.empresa.pagarGastos(costo)) {
         clearDialog();
-        showOutput('No tienes para pagar reparaciones. ¡GAME OVER!');
+        showOutput('No tienes para pagar la reparación. ¡GAME OVER!');
         gameOver = true;
       } else {
         actualizarEmpresaDashboard();
         clearDialog();
-        showOutput(`<strong>Avería de Maquinaria</strong><br>Retrocedes ${v} casillas y pagas $${costo}.`);
+        showOutput(`<strong>Maquinaria Dañada</strong><br>Retrocedes ${v} casillas y pagas $${costo}.`);
       }
       actualizarTablero();
       esperandoDecision = false;
     };
   },
-  // Casilla 44: Pérdida de Contrato. Pierdes 10% de tus ingresos netos.
+  // Casilla 44: PÉRDIDA DE CONTRATO. Pierdes 30% de tus ingresos netos.
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-danger">
-        <strong>CASILLA 44: Pérdida de Contrato</strong><br>
-        <em>Un contrato importante se pierde, afectando tus ingresos.</em>
+        <strong>CASILLA 44: PÉRDIDA DE CONTRATO</strong><br>
+        <em>Un cliente grande cancela el acuerdo. Disminuyen tus ingresos proyectados.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Pierdes 10% de tus ingresos netos.</li>
+          <li><b>Efecto:</b> Pierdes 30% de tus ingresos netos.</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-14" class="btn btn-danger">Aceptar efecto</button>
@@ -1281,24 +1281,23 @@ const efectosAmen = [
       </div>`;
     esperandoDecision = true;
     document.getElementById('ok-amen-14').onclick = () => {
-      const ded = Math.floor(jugador.empresa.ingresoNeto * 0.10);
+      const ded = Math.floor(jugador.empresa.ingresoNeto * 0.30);
       jugador.empresa.ingresoNeto -= ded;
-      jugador.empresa.balance -= ded;
       actualizarEmpresaDashboard();
       clearDialog();
-      showOutput(`<strong>Pérdida de Contrato</strong><br>Pierdes 10% ingresos netos: -$${ded}.`);
+      showOutput(`<strong>Pérdida de Contrato</strong><br>Pierdes 30% de tus ingresos netos: -$${ded}.`);
       esperandoDecision = false;
     };
   },
-  // Casilla 47: Inflación. Aumenta +15% costo producción.
+  // Casilla 47: AUMENTO DEL SALARIO MÍNIMO. Aumenta tu costo de producción en un 30%.
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-danger">
-        <strong>CASILLA 47: Inflación</strong><br>
-        <em>La inflación impacta tus costos de producción.</em>
+        <strong>CASILLA 47: AUMENTO DEL SALARIO MÍNIMO</strong><br>
+        <em>El gobierno decreta un aumento del salario mínimo. Tu estructura de costos laborales se ve afectada.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Costo de producción +15%.</li>
+          <li><b>Efecto:</b> Aumenta tu costo de producción en un 30%.</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-15" class="btn btn-danger">Aceptar efecto</button>
@@ -1306,22 +1305,22 @@ const efectosAmen = [
       </div>`;
     esperandoDecision = true;
     document.getElementById('ok-amen-15').onclick = () => {
-      jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 1.15);
+      jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 1.3);
       actualizarEmpresaDashboard();
       clearDialog();
-      showOutput(`<strong>Inflación</strong><br>Costo de producción +15%.`);
+      showOutput(`<strong>Aumento del salario mínimo</strong><br>Tu costo de producción aumenta en un 30%.`);
       esperandoDecision = false;
     };
   },
-  // Casilla 51: Multa por Incumplimiento. Pierdes 15% ingresos netos y 1 turno.
+  // Casilla 51: SOCIO SE RETIRA. Pierdes el 35% de tus ingresos.
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-danger">
-        <strong>CASILLA 51: Multa por Incumplimiento</strong><br>
-        <em>Una multa por incumplimiento afecta tus finanzas y operaciones.</em>
+        <strong>CASILLA 51: SOCIO SE RETIRA</strong><br>
+        <em>Un socio se retira y exige su parte de la inversión.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Pierdes 15% ingresos netos y 1 turno.</li>
+          <li><b>Efecto:</b> Pierdes el 35% de tus ingresos.</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-16" class="btn btn-danger">Aceptar efecto</button>
@@ -1329,13 +1328,11 @@ const efectosAmen = [
       </div>`;
     esperandoDecision = true;
     document.getElementById('ok-amen-16').onclick = () => {
-      const ded = Math.floor(jugador.empresa.ingresoNeto * 0.15);
+      const ded = Math.floor(jugador.empresa.ingresoNeto * 0.35);
       jugador.empresa.ingresoNeto -= ded;
-      jugador.empresa.balance -= ded;
-      jugador.turnosPerdidos++;
       actualizarEmpresaDashboard();
       clearDialog();
-      showOutput(`<strong>Multa por Incumplimiento</strong><br>Pierdes 15% ingresos netos (-$${ded}) y 1 turno.`);
+      showOutput(`<strong>Socio se retira</strong><br>Pierdes el 35% de tus ingresos: -$${ded}.`);
       esperandoDecision = false;
     };
   },
@@ -1460,6 +1457,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   // document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
   // document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
 });
+
+
 
 
 
