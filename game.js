@@ -1362,15 +1362,15 @@ const efectosAmen = [
       esperandoDecision = false;
     };
   },
-  // Casilla 57: Subida de Costes Energéticos. Aumenta +10% costo producción.
+  // Casilla 57: REGISTRO DE TU MARCA. Pierdes 40% de tus ingresos y retrocedes 5 casillas.
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-danger">
-        <strong>CASILLA 57: Subida de Costes Energéticos</strong><br>
-        <em>El aumento de los costes energéticos impacta tu producción.</em>
+        <strong>CASILLA 57: REGISTRO DE TU MARCA</strong><br>
+        <em>No registraste tu marca a tiempo. Una empresa rival lo hace antes que tú. Te exige dejar de usar tu nombre e imagen comercial. Debes rehacer tu identidad de marca y asumir costos legales.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Costo de producción +10%.</li>
+          <li><b>Efecto:</b> Pierdes el 40% de tus ingresos y retrocedes 5 casillas.</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-18" class="btn btn-danger">Aceptar efecto</button>
@@ -1378,47 +1378,59 @@ const efectosAmen = [
       </div>`;
     esperandoDecision = true;
     document.getElementById('ok-amen-18').onclick = () => {
-      jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 1.10);
+      jugador.empresa.ingresoNeto = Math.floor(jugador.empresa.ingresoNeto * 0.6);
+      jugador.casilla = Math.max(0, jugador.casilla - 5);
+      actualizarTablero();
       actualizarEmpresaDashboard();
       clearDialog();
-      showOutput(`<strong>Costes Energéticos</strong><br>Costo de producción +10%.`);
+      showOutput(`<strong>Registro de tu marca</strong><br>Pierdes el 40% de tus ingresos y retrocedes 5 casillas.`);
       esperandoDecision = false;
     };
   },
-  // Casilla 60: Crisis Mayor. Pierdes 2 turnos y retrocedes al inicio.
+  // Casilla 60: CRISIS MAYOR. Pierdes 2 turnos y retrocedes al inicio de la etapa anterior (parte naranja).
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-danger">
-        <strong>CASILLA 60: Crisis Mayor</strong><br>
-        <em>Una crisis mayor te obliga a volver al inicio y perder turnos.</em>
+        <strong>CASILLA 60: CRISIS MAYOR</strong><br>
+        <em>Evento macroeconómico o geopolítico golpea tu mercado. La demanda cae bruscamente.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Pierdes 2 turnos y vuelves al inicio.</li>
+          <li><b>Efecto:</b> Pierdes dos turnos y retrocedes al inicio de la etapa anterior (parte naranja).</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-19" class="btn btn-danger">Aceptar efecto</button>
         </div>
       </div>`;
-       esperandoDecision = true;
+    esperandoDecision = true;
     document.getElementById('ok-amen-19').onclick = () => {
-      jugador.casilla = 0;
       jugador.turnosPerdidos += 2;
+      // Buscar el inicio de la etapa anterior (parte naranja)
+      // Define aquí las posiciones de inicio de cada etapa naranja
+      const etapasNaranja = [0, 16, 32, 48];
+      let nuevaCasilla = 0;
+      for (let i = etapasNaranja.length - 1; i >= 0; i--) {
+        if (etapasNaranja[i] < jugador.casilla) {
+          nuevaCasilla = etapasNaranja[i];
+          break;
+        }
+      }
+      jugador.casilla = nuevaCasilla;
       actualizarTablero();
       actualizarEmpresaDashboard();
       clearDialog();
-      showOutput(`<strong>Crisis Mayor</strong><br>Pierdes 2 turnos y vuelves al inicio.`);
+      showOutput(`<strong>Crisis Mayor</strong><br>Pierdes 2 turnos y retrocedes al inicio de la etapa anterior (parte naranja).`);
       esperandoDecision = false;
     };
   },
-  // Casilla 63: Devaluación de Activos. Pierdes 10% margen de ganancia y 1 turno.
+  // Casilla 63: DEVALUACIÓN DE ACTIVOS. Pierdes 20% margen de ganancia y 2 turnos.
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-danger">
-        <strong>CASILLA 63: Devaluación de Activos</strong><br>
-        <em>Una devaluación de activos afecta tu margen y operaciones.</em>
+        <strong>CASILLA 63: DEVALUACIÓN DE ACTIVOS</strong><br>
+        <em>Por factores externos, tus propiedades inmobiliarias se devalúan rápidamente. Pierdes valor patrimonial.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Pierdes 10% margen de ganancia y 1 turno.</li>
+          <li><b>Efecto:</b> Pierdes 20% de margen de ganancia y 2 turnos.</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-20" class="btn btn-danger">Aceptar efecto</button>
@@ -1426,11 +1438,11 @@ const efectosAmen = [
       </div>`;
     esperandoDecision = true;
     document.getElementById('ok-amen-20').onclick = () => {
-      jugador.empresa.margenGanancia *= 0.90;
-      jugador.turnosPerdidos++;
+      jugador.empresa.margenGanancia *= 0.8;
+      jugador.turnosPerdidos += 2;
       actualizarEmpresaDashboard();
       clearDialog();
-      showOutput(`<strong>Devaluación de Activos</strong><br>Pierdes 10% margen de ganancia y 1 turno.`);
+      showOutput(`<strong>Devaluación de Activos</strong><br>Pierdes 20% de margen de ganancia y 2 turnos.`);
       esperandoDecision = false;
     };
   }
@@ -1448,7 +1460,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   // document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
   // document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
 });
-
 
 
 
