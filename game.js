@@ -86,22 +86,17 @@ function clearDialog(){document.getElementById('dialog-container').innerHTML='';
 function showOutput(html){document.getElementById('output').innerHTML=html;}
 
 // --- Render Tablero y Dashboard ---
-function actualizarTablero(){
-  const bc=document.getElementById('board-container'); bc.innerHTML='';
-  const start=Math.max(0,jugador?jugador.posicion-8:0),end=Math.min(63,start+15);
-  const grid=document.createElement('div'); grid.className='board-grid';
-  for(let i=start;i<=end;i++){ let cell=tablero[i];
-    const d=document.createElement('div'); d.className='board-space';
-    if(jugador&&jugador.posicion===i)d.classList.add('active');
-    d.innerHTML=`<div>${i}</div><div>${cell.icon}</div>`;
-    grid.appendChild(d);
-  }
-  bc.appendChild(grid);
-}
+// Elimina la función de renderizado del tablero, ya no es necesaria
+// function actualizarTablero(){ ... }
+
+// Solo actualiza el dashboard de la empresa y la posición del jugador en el nuevo panel creativo
 function actualizarEmpresaDashboard(){
   if(!jugador)return;
   const cm=document.getElementById('company-metrics');
   cm.innerHTML=jugador.empresa.estado().replace(/\n/g,'<br>');
+  // Actualiza la posición del jugador si tienes un panel o elemento específico para mostrarla
+  // Por ejemplo, si tienes un elemento con id="player-pos", puedes hacer:
+  // document.getElementById('player-pos').textContent = `Casilla: ${jugador.posicion}`;
 }
 
 // --- Inicio y Turno ---
@@ -111,7 +106,8 @@ function initJuego(){
   jugador=new Jugador(nombre);gameOver=false;esperandoDecision=false;clearDialog();
   document.getElementById('juego').style.display='flex';
   showOutput(`🎮 Bienvenido ${nombre}!<br>`+jugador.mostrarEstado().replace(/\n/g,'<br>'));
-  actualizarTablero();actualizarEmpresaDashboard();
+  // Elimina la llamada a actualizarTablero();
+  actualizarEmpresaDashboard();
 }
 function turno() {
   // 0) Incrementar y mostrar encabezado de ronda
@@ -163,7 +159,7 @@ function turno() {
   showOutput(`🎲 ${jugador.nombre} avanza a ${np}, gana $${neto.toFixed(0)}`);
 
   // 5) Actualizar UI
-  actualizarTablero();
+  // Elimina la llamada a actualizarTablero();
   actualizarEmpresaDashboard();
 
   // 6) Victoria
@@ -210,7 +206,8 @@ const efectosOpp = [
     document.getElementById('ok-0').onclick = () => {
       clearDialog();
       jugador.posicion++;
-      actualizarTablero();
+      // actualizarTablero();
+      actualizarEmpresaDashboard();
       showOutput('<strong>Desarrollo de Nuevo Producto:</strong> Avanzas 1 casilla extra.');
       esperandoDecision = false;
     };
@@ -728,7 +725,8 @@ const efectosAmen = [
   // Casilla 6: Retraso Logístico. Retrocedes 1 casilla.
   () => {
     jugador.posicion = Math.max(0, jugador.posicion - 1);
-    actualizarTablero();
+    // actualizarTablero(); // Eliminar esta línea
+    actualizarEmpresaDashboard();
     showOutput(`<strong>Retraso Logístico</strong><br>Retrocedes 1 casilla.`);
   },
   // Casilla 9: Reparación de Maquinaria. Pierdes $10,000 y +5% costo producción.
@@ -801,14 +799,16 @@ const efectosAmen = [
   // Casilla 31: Problema de Calidad. Retrocedes 2 casillas.
   () => {
     jugador.posicion = Math.max(0, jugador.posicion - 2);
-    actualizarTablero();
+    // actualizarTablero();
+    actualizarEmpresaDashboard();
     showOutput(`<strong>Problema de Calidad</strong><br>Retrocedes 2 casillas.`);
   },
   // Casilla 35: Incendio en Planta. Retrocedes 3 casillas y pierdes 3 turnos.
   () => {
     jugador.posicion = Math.max(0, jugador.posicion - 3);
     jugador.turnosPerdidos += 3;
-    actualizarTablero();
+    // actualizarTablero();
+    actualizarEmpresaDashboard();
     showOutput(`<strong>Incendio en Planta</strong><br>Retrocedes 3 casillas y pierdes 3 turnos.`);
   },
   // Casilla 38: Fraude Interno. Pierdes USD 30,000 de ingresos netos.
@@ -840,7 +840,7 @@ const efectosAmen = [
       const costo = v * 10000;
       if (!jugador.empresa.pagarGastos(costo)) { showOutput('No tienes para pagar reparaciones. ¡GAME OVER!'); gameOver = true; }
       else { actualizarEmpresaDashboard(); showOutput(`<strong>Avería de Maquinaria</strong><br>Retrocedes ${v} casillas y pagas $${costo}.`); }
-      actualizarTablero();
+      // actualizarTablero();
       esperandoDecision = false;
     };
   },
@@ -883,7 +883,8 @@ const efectosAmen = [
   () => {
     jugador.posicion = 0;
     jugador.turnosPerdidos += 2;
-    actualizarTablero();
+    // actualizarTablero();
+    actualizarEmpresaDashboard();
     showOutput(`<strong>Crisis Mayor</strong><br>Pierdes 2 turnos y vuelves al inicio.`);
   },
   // Casilla 63: Devaluación de Activos. Pierdes 10% margen de ganancia y 1 turno.
@@ -902,7 +903,8 @@ function procesarCasillaAmenaza(cas){esperandoDecision=false;clearDialog();efect
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('btn-iniciar').addEventListener('click',initJuego);
   document.getElementById('btn-turno').addEventListener('click',turno);
-  document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
-  document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
-});
 
+  // Si tienes los botones de dado aleatorio y limpiar log, descomenta estas líneas:
+  // document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
+  // document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
+});
