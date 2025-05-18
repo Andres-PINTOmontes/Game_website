@@ -220,3 +220,43 @@ button.btn {
     grid-template-columns: repeat(4, 1fr) !important;
   }
 }
+
+/* Paneles alineados horizontalmente en web y con scroll horizontal en móvil */
+.panel-row {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: stretch;
+  width: 100%;
+  overflow-x: auto;
+}
+.panel-row > div {
+  min-width: 220px;
+  max-width: 350px;
+  flex: 1 1 0;
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  margin-bottom: 0;
+  margin-top: 0;
+  margin-right: 0;
+}
+
+@media (max-width: 900px) {
+  .panel-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  .panel-row > div {
+    min-width: 220px;
+    max-width: 90vw;
+    font-size: 0.98rem;
+  }
+  #board-container {
+    grid-template-columns: repeat(4, 1fr) !important;
+    min-width: 320px;
+  }
+}
