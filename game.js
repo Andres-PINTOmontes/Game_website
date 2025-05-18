@@ -128,7 +128,8 @@ function actualizarTablero(){
 function actualizarEmpresaDashboard(){
   if(!jugador)return;
   const cm=document.getElementById('company-metrics');
-  cm.innerHTML=jugador.empresa.estado().replace(/\n/g,'<br>');
+  // Panel con nombre en negrilla
+  cm.innerHTML = `<b>Tabla variable</b><br>` + jugador.empresa.estado().replace(/\n/g,'<br>');
 }
 
 // --- Inicio y Turno ---
@@ -192,7 +193,7 @@ function turno() {
   jugador.casilla      = np;
   jugador.ultimoDado   = v;
 
-  showOutput(`🎲 ${jugador.nombre} avanza a ${np}, gana $${neto.toFixed(0)}`);
+  showOutput(`🎲 ${jugador.nombre} avanza a ${np}, gana $${neto.toFixed(0)}<br><b>Generaste en este movimiento: $${neto.toFixed(0)}</b>`);
   // 5) Actualizar UI
   actualizarTablero();
   actualizarEmpresaDashboard();
@@ -1365,7 +1366,7 @@ const efectosAmen = [
       esperandoDecision = false;
     };
   },
-  // Casilla 57: REGISTRO DE TU MARCA. Pierdes 40% de tus ingresos y retrocedes 5 casillas.
+  // Casilla 57: REGISTRO DE TU MARCA. Pierdes 40% de tus ingresos y retrocedes  5 casillas.
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
