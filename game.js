@@ -372,15 +372,20 @@ const efectosOpp = [
       esperandoDecision = false;
     };
   },
-    // 5: Casilla 17 - Investigación y Desarrollo
+  // 5: Casilla 17 - Desarrollo de nuevo producto/servicio
   () => {
     clearDialog();
     const html = `
       <div class="alert alert-primary">
-        <strong>Investigación y Desarrollo</strong><br>Invierte $19,000 para duplicar el retorno de tu último avance.
+        <strong>CASILLA 17: Desarrollo de nuevo producto/servicio</strong><br>
+        <em>Tu equipo de innovación lanza un producto revolucionario.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Condición:</b> Se debe pagar una fase de investigación y desarrollo: $19,000</li>
+          <li><b>Efecto:</b> Lanza un dado. Si el resultado es par, la venta del próximo movimiento se duplica (+100%). Si es impar, aumentan en un 50%.</li>
+        </ul>
         <div class="mt-3">
-          <button id="ok-5" class="btn btn-success me-2">Tomar</button>
-          <button id="no-5" class="btn btn-secondary">Pasar</button>
+          <button id="ok-5" class="btn btn-success me-2">Pagar y lanzar dado</button>
+          <button id="no-5" class="btn btn-secondary">Rechazar</button>
         </div>
       </div>`;
     document.getElementById('dialog-container').innerHTML = html;
@@ -389,15 +394,42 @@ const efectosOpp = [
       clearDialog();
       if (jugador.empresa.balance >= 19000) {
         jugador.empresa.pagarGastos(19000);
-        jugador.empresa.actualizarIngresos(jugador.ultimoIngreso);
-        actualizarEmpresaDashboard();
-        showOutput(`<strong>I+D:</strong> Inviertes $19,000 y duplicas tu último ingreso: +$${jugador.ultimoIngreso}.`);
+        // Pedir al usuario que ingrese el resultado del dado
+        document.getElementById('dialog-container').innerHTML = `
+          <div class="alert alert-info">
+            Ingresa el resultado de tu dado (1-6):<br>
+            <input id="dado-c17" type="number" min="1" max="6" class="form-control w-auto d-inline-block" style="width:80px;display:inline-block;" placeholder="Dado">
+            <button id="conf-c17" class="btn btn-primary mt-2">Confirmar</button>
+          </div>`;
+        document.getElementById('conf-c17').onclick = () => {
+          const valor = parseInt(document.getElementById('dado-c17').value);
+          if (isNaN(valor) || valor < 1 || valor > 6) {
+            alert('Ingresa un valor entre 1 y 6.');
+            return;
+          }
+          clearDialog();
+          if (valor % 2 === 0) {
+            jugador.empresa.bonificacionVentas = 2.0;
+            jugador.empresa.rondasBonificacion = 1;
+            showOutput('<strong>¡Dado par!</strong> La venta del próximo movimiento se duplica (+100%).');
+          } else {
+            jugador.empresa.bonificacionVentas = 1.5;
+            jugador.empresa.rondasBonificacion = 1;
+            showOutput('<strong>¡Dado impar!</strong> La venta del próximo movimiento aumenta en un 50%.');
+          }
+          actualizarEmpresaDashboard();
+          esperandoDecision = false;
+        };
       } else {
-        showOutput('<strong>I+D:</strong> Fondos insuficientes.');
+        showOutput('<strong>Desarrollo de nuevo producto:</strong> Fondos insuficientes.');
+        esperandoDecision = false;
       }
+    };
+    document.getElementById('no-5').onclick = () => {
+      clearDialog();
+      showOutput('<em>Rechazas la oportunidad.</em>');
       esperandoDecision = false;
     };
-    document.getElementById('no-5').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
   },
   // 6: Casilla 20 - Inteligencia Artificial
   () => {
@@ -968,7 +1000,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   // document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
   // document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
 });
-
 
 
 
