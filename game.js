@@ -936,24 +936,27 @@ const efectosAmen = [
     jugador.turnosPerdidos += 2;
     showOutput(`<strong>Inspección Fiscal</strong><br>Pierdes 2 turnos.`);
   },
-  // Casilla 6: Retraso Logístico. Retrocedes 1 casilla.
+  // Casilla 6: Retraso Logístico
   () => {
-    jugador.casilla = Math.max(0, jugador.casilla - 1);
+    jugador.casilla = Math.max(0, jugador.casilla - 3);
     actualizarTablero();
     actualizarEmpresaDashboard();
-    showOutput(`<strong>Retraso Logístico</strong><br>Retrocedes 1 casilla.`);
+    showOutput(
+      `<strong>CASILLA 6: RETRASO LOGÍSTICO</strong><br>
+      <em>El proveedor logístico falla y tus productos no llegan.</em><br>
+      <b>Consecuencia:</b> No hay ventas esta ronda y retrocedes 3 casillas.`
+    );
   },
-  // Casilla 9: Reparación de Maquinaria. Pierdes $10,000 y +5% costo producción.
+  // Casilla 9: Reparación de Maquinaria
   () => {
-    if (jugador.empresa.ingresoNeto >= 10000) {
-      jugador.empresa.pagarGastos(10000);
-      jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 1.05);
-      actualizarEmpresaDashboard();
-      showOutput(`<strong>Reparación de Maquinaria</strong><br>Pagas $10,000 y costo de producción +5%.`);
-    } else {
-      showOutput(`<strong>Reparación de Maquinaria</strong><br>No tienes $10,000. ¡GAME OVER!`);
-      gameOver = true;
-    }
+    jugador.empresa.pagarGastos(30000);
+    jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 1.10);
+    actualizarEmpresaDashboard();
+    showOutput(
+      `<strong>CASILLA 9: REPARACIÓN DE MAQUINARIA</strong><br>
+      <em>Una de tus máquinas clave falla. Deberás detener la producción para repararla.</em><br>
+      <b>Consecuencia:</b> Pierdes $30,000 y tu costo de producción aumenta un 10%.`
+    );
   },
   // Casilla 12: Fallo en el Sistema de Ventas. Pierdes 5% de bonificaciones de ventas por 2 rondas.
   () => {
@@ -970,13 +973,14 @@ const efectosAmen = [
     actualizarEmpresaDashboard();
     showOutput(`<strong>Paro de Producción</strong><br>Retrocedes 1 casilla y bonificaciones limitadas por 4 rondas.`);
   },
-  // Casilla 19: Normativas y Regulaciones. Lanza un dado; +5% costo producción por cada punto.
+  // Casilla 19: Cambio en normativas legales
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-warning">
-        <strong>Normativas y Regulaciones</strong><br>
-        Ingresa el resultado de tu dado físico:<br>
+        <strong>CASILLA 19: Cambio en normativas legales</strong><br>
+        <em>El gobierno aprueba una nueva regulación que afecta tu sector. Debes adaptar urgentemente tu producto a los nuevos requisitos del gobierno.</em><br>
+        <b>Consecuencia:</b> Lanza el dado; tu costo de producción aumenta un 5% por cada punto.<br>
         <input type="number" id="dreg" class="form-control mb-2" min="1" max="6" placeholder="Dado">
         <button id="conf-reg" class="btn btn-primary">Confirmar</button>
       </div>`;
@@ -987,23 +991,36 @@ const efectosAmen = [
       jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * (1 + 0.05 * v));
       clearDialog();
       actualizarEmpresaDashboard();
-      showOutput(`<strong>Normativas y Regulaciones</strong><br>Costo de producción +${5 * v}%`);
+      showOutput(
+        `<strong>CASILLA 19: Cambio en normativas legales</strong><br>
+        <em>El gobierno aprueba una nueva regulación que afecta tu sector.</em><br>
+        <b>Consecuencia:</b> Costo de producción +${5 * v}%.`
+      );
       esperandoDecision = false;
     };
   },
-  // Casilla 22: Sanción por Incumplimiento. Retrocedes 2 casillas y pierdes 2 turnos.
+  // Casilla 22: Sanción por Incumplimiento
   () => {
     jugador.casilla = Math.max(0, jugador.casilla - 2);
-    jugador.turnosPerdidos += 2;
+    jugador.turnosPerdidos += 3;
     actualizarTablero();
     actualizarEmpresaDashboard();
-    showOutput(`<strong>Sanción por Incumplimiento</strong><br>Retrocedes 2 casillas y pierdes 2 turnos.`);
+    showOutput(
+      `<strong>CASILLA 22: SANCIÓN POR INCUMPLIMIENTO</strong><br>
+      <em>Una entidad reguladora te multa por no cumplir un requerimiento legal.</em><br>
+      <b>Consecuencia:</b> Retrocedes 2 casillas y pierdes 3 turnos.`
+    );
   },
-  // Casilla 25: Competencia Desleal. Pierdes 5% de margen de ganancia.
+  // Casilla 25: Competencia Desleal
   () => {
-    jugador.empresa.margenGanancia *= 0.95;
+    jugador.empresa.margenGanancia *= 0.90;
+    jugador.empresa.ingresoNeto = Math.floor(jugador.empresa.ingresoNeto * 0.90);
     actualizarEmpresaDashboard();
-    showOutput(`<strong>Competencia Desleal</strong><br>Margen de ganancia -5%.`);
+    showOutput(
+      `<strong>CASILLA 25: COMPETENCIA DESLEAL</strong><br>
+      <em>Una empresa rival baja precios drásticamente o copia tu producto.</em><br>
+      <b>Consecuencia:</b> Pierdes 10% de margen de ganancias y tus ingresos disminuyen en un 10%.`
+    );
   },
   // Casilla 28: Aumento de Materia Prima. Aumenta +5% costo producción.
   () => {
@@ -1123,6 +1140,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   // document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
   // document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
 });
+
+
 
 
 
