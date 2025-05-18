@@ -94,9 +94,9 @@ function actualizarEmpresaDashboard(){
   if(!jugador)return;
   const cm=document.getElementById('company-metrics');
   cm.innerHTML=jugador.empresa.estado().replace(/\n/g,'<br>');
-  // Actualiza la posición del jugador si tienes un panel o elemento específico para mostrarla
-  // Por ejemplo, si tienes un elemento con id="player-pos", puedes hacer:
-  // document.getElementById('player-pos').textContent = `Casilla: ${jugador.posicion}`;
+  // Actualiza la posición creativa del jugador
+  const posNum = document.getElementById('player-pos-num');
+  if (posNum) posNum.textContent = jugador.posicion;
 }
 
 // --- Inicio y Turno ---
