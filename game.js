@@ -92,9 +92,14 @@ function actualizarTablero(){
   const bc=document.getElementById('board-container'); bc.innerHTML='';
   const start=Math.max(0,jugador?jugador.casilla-8:0),end=Math.min(63,start+15);
   const grid=document.createElement('div'); grid.className='board-grid';
-  for(let i=start;i<=end;i++){ let cell=tablero[i];
+  for(let i=start;i<=end;i++){
+    let cell=tablero[i];
     const d=document.createElement('div'); d.className='board-space';
     if(jugador&&jugador.casilla===i)d.classList.add('active');
+    // Añadir color especial a oportunidades hasta la 16
+    if(cell.tipo==='oportunidad' && cell.indiceEfecto!==null && cell.indiceEfecto<=16){
+      d.classList.add('opp-early');
+    }
     d.innerHTML=`<div>${i}</div><div>${cell.icon}</div>`;
     grid.appendChild(d);
   }
@@ -1090,11 +1095,5 @@ function procesarCasillaAmenaza(cas){esperandoDecision=false;clearDialog();efect
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('btn-iniciar').addEventListener('click',initJuego);
   document.getElementById('btn-turno').addEventListener('click',turno);
-
-  // Si tienes los botones de dado aleatorio y limpiar log, descomenta estas líneas:
-  // document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
-  // document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
-});
-
 
 
