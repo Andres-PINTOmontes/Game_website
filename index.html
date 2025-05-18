@@ -9,6 +9,8 @@
   <!-- FontAwesome para iconos -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
+  <!-- Fuente atractiva para el título -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
   <style>
     /* Elimina o comenta la siguiente línea para evitar sobrescribir el fondo del CSS */
     /* body { background: #f8f9fa; } */
@@ -18,11 +20,31 @@
     .player-token { width: 12px; height: 12px; background: #198754; border-radius: 50%; position: absolute; top: 4px; right: 4px; }
     #company-metrics .metric-item { display: flex; justify-content: space-between; margin-bottom: 6px; }
     #output { background: #fff; border: 1px solid #ddd; padding: 12px; height: 350px; overflow-y: auto; border-radius: 4px; }
+    .titulo-ceo {
+      font-family: 'Bebas Neue', cursive, sans-serif;
+      font-size: 3rem;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 2rem;
+    }
+    .titulo-ceo img {
+      height: 56px;
+      width: auto;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      margin-left: 8px;
+    }
   </style>
 </head>
 <body>
   <div class="container py-4">
-    <h1 class="text-center mb-4"><i class="fas fa-chart-line"></i> Juego de Emprendimiento y Contabilidad</h1>
+    <div class="titulo-ceo">
+      <span>The CEO</span>
+      <img src="assets/logo.jpg" alt="Logo">
+    </div>
     <!-- Menú Inicial -->
     <div id="menu" class="d-flex justify-content-center mb-4">
       <input id="nombre" class="form-control w-50 me-2" placeholder="Nombre del jugador">
