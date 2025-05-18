@@ -178,12 +178,20 @@
       </div>
       <div class="row">
         <!-- Contenedor de Diálogos Inline -->
-        <!--<div class="col-12 mb-3">
-          <div id="dialog-container"></div>-->
-        <!--</div> -->
-        <!-- Tablero -->
+        <div class="col-12 mb-3">
+          <!--<div id="dialog-container"></div>-->
+        </div>
+        <!-- Tablero (ahora solo muestra la posición del jugador) -->
         <div class="col-lg-8 mb-3">
-          <div id="board-container" class="border rounded p-2 bg-white"></div>
+          <div id="player-position-panel" class="border rounded p-4 bg-white d-flex flex-column align-items-center justify-content-center" style="min-height:180px;">
+            <div style="font-size:2.5rem; margin-bottom:0.5rem;">🎲</div>
+            <div id="player-pos-label" style="font-size:1.3rem; color:#2E3A59; font-weight:600;">
+              Posición actual: <span id="player-pos-num">0</span>
+            </div>
+            <div style="font-size:1.1rem; color:#888;">
+              ¡Avanza por el camino del éxito!
+            </div>
+          </div>
         </div>
         <!-- Panel Empresa + Log -->
         <div class="col-lg-4">
@@ -218,3 +226,5 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+
