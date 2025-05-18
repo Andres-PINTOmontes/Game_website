@@ -211,7 +211,7 @@ const efectosOpp = [
         <strong>CASILLA 1: Tendencia Viral en Redes Sociales</strong><br>
         <em>Un influencer menciona tu producto en redes sociales sin costo alguno, y esto genera un aumento explosivo de visibilidad.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Recibes ingresos normales y avanzas una casilla extra.</li>
+          <li><b>Effecto:</b> Recibes ingresos normales y avanzas una casilla extra.</li>
           <li><b>Costos:</b> N.A</li>
         </ul>
         <div class="mt-3">
@@ -269,7 +269,7 @@ const efectosOpp = [
     };
   },
 
-  // 2: Casilla 7 - Branding de la marca
+  // 2: Casilla 7 - Branding de la marca (nuevo efecto: ingreso inmediato y pequeño bonus)
   () => {
     clearDialog();
     const html = `
@@ -277,8 +277,8 @@ const efectosOpp = [
         <strong>CASILLA 7: Branding de la marca</strong><br>
         <em>El posicionamiento de tu marca requiere que hagas una estrategia de branding. Para esto debes invertir $8,000.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Condición:</b> Requiere invertir $18,000</li>
-          <li><b>Efecto:</b> Aumenta tus ingresos en un 10% en las siguientes 2 rondas por aumento de visibilidad.</li>
+          <li><b>Condición:</b> Requiere invertir $8,000</li>
+          <li><b>Efecto:</b> Recibes $12,000 por nueva visibilidad y puedes lanzar un dado: si sale 5 o 6, recibes $5,000 extra.</li>
         </ul>
         <div class="mt-3">
           <button id="ok-2" class="btn btn-success me-2">Invertir</button>
@@ -289,16 +289,31 @@ const efectosOpp = [
     esperandoDecision = true;
     document.getElementById('ok-2').onclick = () => {
       clearDialog();
-      if (jugador.empresa.balance >= 18000) {
-        jugador.empresa.pagarGastos(18000);
-        jugador.empresa.bonificacionVentas = 1.10;
-        jugador.empresa.rondasBonificacion = 2;
-        actualizarEmpresaDashboard();
-        showOutput('<strong>Branding:</strong> Tus ingresos aumentan un 10% en las siguientes 2 rondas.');
+      if (jugador.empresa.balance >= 8000) {
+        jugador.empresa.pagarGastos(8000);
+        jugador.empresa.actualizarIngresos(12000);
+        document.getElementById('dialog-container').innerHTML = `
+          <div class="alert alert-info">
+            Lanza un dado (1-6) para ver si obtienes un bonus:<br>
+            <input id="dado-bonus7" type="number" min="1" max="6" class="form-control w-auto d-inline-block" style="width:80px;display:inline-block;" placeholder="Dado">
+            <button id="conf-bonus7" class="btn btn-primary mt-2">Confirmar</button>
+          </div>`;
+        document.getElementById('conf-bonus7').onclick = () => {
+          const val = parseInt(document.getElementById('dado-bonus7').value);
+          clearDialog();
+          if (val === 5 || val === 6) {
+            jugador.empresa.actualizarIngresos(5000);
+            showOutput('<strong>Branding:</strong> Recibes $12,000 y un bonus de $5,000 por excelente visibilidad.');
+          } else {
+            showOutput('<strong>Branding:</strong> Recibes $12,000 por nueva visibilidad.');
+          }
+          actualizarEmpresaDashboard();
+          esperandoDecision = false;
+        };
       } else {
         showOutput('<strong>Branding:</strong> Fondos insuficientes.');
+        esperandoDecision = false;
       }
-      esperandoDecision = false;
     };
     document.getElementById('no-2').onclick = () => {
       clearDialog();
@@ -522,7 +537,7 @@ const efectosOpp = [
       esperandoDecision = false;
     };
   },
-  // 8: Casilla 26 - Participación en feria de emprendimiento
+  // 8: Casilla 26 - Participación en feria de emprendimiento (nuevo efecto: ingreso inmediato y posible gasto extra)
   () => {
     clearDialog();
     const html = `
@@ -530,8 +545,8 @@ const efectosOpp = [
         <strong>CASILLA 26: Participación en feria de emprendimiento</strong><br>
         <em>Tu empresa fue seleccionada para participar en una feria local. Allí logras nuevos contactos y oportunidades comerciales.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Condición:</b> Debes invertir $21,000 en montaje y transporte al evento</li>
-          <li><b>Efecto:</b> Avanzas 3 casillas adicionales en la siguiente ronda y aumentas en un 10% la venta de la siguiente ronda.</li>
+          <li><b>Condición:</b> Debes invertir $10,000 en el evento</li>
+          <li><b>Efecto:</b> Recibes $18,000 por nuevos clientes, pero lanza un dado: si sale 1 o 2, pagas $5,000 extra por imprevistos.</li>
         </ul>
         <div class="mt-3">
           <button id="ok-8" class="btn btn-success me-2">Invertir</button>
@@ -542,18 +557,31 @@ const efectosOpp = [
     esperandoDecision = true;
     document.getElementById('ok-8').onclick = () => {
       clearDialog();
-      if (jugador.empresa.balance >= 21000) {
-        jugador.empresa.pagarGastos(21000);
-        jugador.posicion += 3;
-        jugador.empresa.bonificacionVentas = 1.10;
-        jugador.empresa.rondasBonificacion = 1;
-        actualizarTablero();
-        actualizarEmpresaDashboard();
-        showOutput('<strong>Feria de emprendimiento:</strong> Avanzas 3 casillas y aumentas en un 10% la venta de la siguiente ronda.');
+      if (jugador.empresa.balance >= 10000) {
+        jugador.empresa.pagarGastos(10000);
+        jugador.empresa.actualizarIngresos(18000);
+        document.getElementById('dialog-container').innerHTML = `
+          <div class="alert alert-info">
+            Lanza un dado (1-6) para ver si tienes gastos imprevistos:<br>
+            <input id="dado-feria" type="number" min="1" max="6" class="form-control w-auto d-inline-block" style="width:80px;display:inline-block;" placeholder="Dado">
+            <button id="conf-feria" class="btn btn-primary mt-2">Confirmar</button>
+          </div>`;
+        document.getElementById('conf-feria').onclick = () => {
+          const val = parseInt(document.getElementById('dado-feria').value);
+          clearDialog();
+          if (val === 1 || val === 2) {
+            jugador.empresa.pagarGastos(5000);
+            showOutput('<strong>Feria:</strong> Recibes $18,000 pero pagas $5,000 extra por imprevistos.');
+          } else {
+            showOutput('<strong>Feria:</strong> Recibes $18,000 por nuevos clientes.');
+          }
+          actualizarEmpresaDashboard();
+          esperandoDecision = false;
+        };
       } else {
-        showOutput('<strong>Feria de emprendimiento:</strong> Fondos insuficientes.');
+        showOutput('<strong>Feria:</strong> Fondos insuficientes.');
+        esperandoDecision = false;
       }
-      esperandoDecision = false;
     };
     document.getElementById('no-8').onclick = () => {
       clearDialog();
