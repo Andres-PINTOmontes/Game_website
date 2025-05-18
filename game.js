@@ -71,8 +71,9 @@ function crearTablero() {
   }
   const esquinas = {0:'💥',16:'💰',32:'💎',48:'🚀'};
   Object.keys(esquinas).forEach(i=> t[i] = { icon: esquinas[i], tipo:'especial', indiceEfecto:null });
+  // Cambia el emoji de oportunidades por "$"
   const opp=[1,4,7,10,13,17,20,23,26,29,33,36,39,42,45,49,52,55,58,61];
-  opp.forEach((c,i)=> t[c]={icon:'🎁',tipo:'oportunidad',indiceEfecto:i});
+  opp.forEach((c,i)=> t[c]={icon:'$',tipo:'oportunidad',indiceEfecto:i});
   const threats=[3,6,9,12,15,19,22,25,28,31,35,38,41,44,47,51,54,57,60,63];
   threats.forEach((c,i)=> t[c]={icon:'⚠️',tipo:'amenaza',indiceEfecto:i});
   return t;
