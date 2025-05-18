@@ -190,3 +190,33 @@ button.btn {
 .text-center {
   text-align: center;
 }
+.d-flex.flex-column.flex-lg-row.gap-3.align-items-stretch.w-100 {
+  flex-direction: column;
+  gap: 1rem;
+}
+@media (min-width: 992px) {
+  .d-flex.flex-column.flex-lg-row.gap-3.align-items-stretch.w-100 {
+    flex-direction: row !important;
+    gap: 1rem !important;
+  }
+}
+#initial-attrs {
+  background: #f8fafc;
+  font-size: 1rem;
+  min-width: 160px;
+  min-height: 180px;
+  margin-top: 1rem;
+}
+@media (max-width: 900px) {
+  #initial-attrs {
+    margin-top: 0.5rem;
+    min-width: 0;
+    font-size: 0.98rem;
+  }
+  .main-panel {
+    padding: 0.5rem 0.2rem;
+  }
+  .board-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
