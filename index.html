@@ -171,9 +171,7 @@
       <div id="controls" class="mb-3">
         <div class="d-flex flex-wrap justify-content-center align-items-center gap-3">
           <input type="number" id="dado" class="form-control w-auto" min="1" max="6" placeholder="Dado">
-          <!-- <button id="btn-random-dice" class="btn btn-secondary"><i class="fas fa-dice"></i> Aleatorio</button> -->
           <button id="btn-turno" class="btn btn-success"><i class="fas fa-forward"></i> Siguiente Turno</button>
-          <!-- <button id="btn-clear-log" class="btn btn-warning"><i class="fas fa-broom"></i> Limpiar Log</button> -->
         </div>
       </div>
       <div class="row">
@@ -181,14 +179,16 @@
         <div class="col-12 mb-3">
           <div id="dialog-container"></div>
         </div>
-        <!-- Tablero -->
+        <!-- Tablero visual -->
         <div class="col-lg-8 mb-3">
           <div id="board-container" class="border rounded p-2 bg-white"></div>
         </div>
         <!-- Panel Empresa + Log -->
         <div class="col-lg-4">
-          <div id="company-metrics" class="border rounded p-3 bg-white mb-3"></div>
-          <div id="output"></div>
+          <div class="d-flex flex-row gap-3 align-items-start">
+            <div id="company-metrics" class="border rounded p-3 bg-white mb-3 flex-fill" style="min-width:180px;"></div>
+            <div id="output" class="border rounded p-3 bg-white mb-3 flex-fill" style="min-width:220px; max-width:320px;"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -201,7 +201,6 @@
   <!-- Habilitar 'Enter' en el campo dado para avanzar turno -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-  <link rel=…ener('DOMContentLoaded', () => {
       const dadoInput = document.getElementById('dado');
       const btnTurno = document.getElementById('btn-turno');
       if (dadoInput && btnTurno) {
