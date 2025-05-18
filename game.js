@@ -431,15 +431,20 @@ const efectosOpp = [
       esperandoDecision = false;
     };
   },
-  // 6: Casilla 20 - Inteligencia Artificial
+  // 6: Casilla 20 - Inversión en Tecnología
   () => {
     clearDialog();
     const html = `
       <div class="alert alert-primary">
-        <strong>Inteligencia Artificial</strong><br>Invierte $22,000 para reducir costos de producción en un 15%.
+        <strong>CASILLA 20: Inversión en Tecnología</strong><br>
+        <em>Tu empresa adopta inteligencia artificial para mejorar la productividad.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Condición:</b> Requiere invertir $22,000</li>
+          <li><b>Efecto:</b> Disminuye el costo de producción en un 15%</li>
+        </ul>
         <div class="mt-3">
-          <button id="ok-6" class="btn btn-success me-2">Tomar</button>
-          <button id="no-6" class="btn btn-secondary">Pasar</button>
+          <button id="ok-6" class="btn btn-success me-2">Invertir</button>
+          <button id="no-6" class="btn btn-secondary">Rechazar</button>
         </div>
       </div>`;
     document.getElementById('dialog-container').innerHTML = html;
@@ -450,23 +455,33 @@ const efectosOpp = [
         jugador.empresa.pagarGastos(22000);
         jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 0.85);
         actualizarEmpresaDashboard();
-        showOutput('<strong>IA:</strong> Inviertes $22,000 y -15% costos producción.');
+        showOutput('<strong>Inversión en Tecnología:</strong> Disminuyes el costo de producción en un 15%.');
       } else {
-        showOutput('<strong>IA:</strong> Fondos insuficientes.');
+        showOutput('<strong>Inversión en Tecnología:</strong> Fondos insuficientes.');
       }
       esperandoDecision = false;
     };
-    document.getElementById('no-6').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
+    document.getElementById('no-6').onclick = () => {
+      clearDialog();
+      showOutput('<em>Rechazas la oportunidad.</em>');
+      esperandoDecision = false;
+    };
   },
-  // 7: Casilla 23 - Optimización de Procesos
+
+  // 7: Casilla 23 - Nuevo proveedor de materia prima
   () => {
     clearDialog();
     const html = `
       <div class="alert alert-primary">
-        <strong>Optimización de Procesos</strong><br>Reduce costo de producción en un 5%.
+        <strong>CASILLA 23: Nuevo proveedor de materia prima</strong><br>
+        <em>Has encontrado un proveedor que te ofrece la materia prima a un 5% más bajo.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Condición:</b> N.A</li>
+          <li><b>Efecto:</b> Disminuye directamente tu costo de producción en un 5% y aumenta tus ingresos en un 10%.</li>
+        </ul>
         <div class="mt-3">
-          <button id="ok-7" class="btn btn-success me-2">Tomar</button>
-          <button id="no-7" class="btn btn-secondary">Pasar</button>
+          <button id="ok-7" class="btn btn-success me-2">Aceptar</button>
+          <button id="no-7" class="btn btn-secondary">Rechazar</button>
         </div>
       </div>`;
     document.getElementById('dialog-container').innerHTML = html;
@@ -474,331 +489,20 @@ const efectosOpp = [
     document.getElementById('ok-7').onclick = () => {
       clearDialog();
       jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 0.95);
+      // Aumenta ingresos netos en 10%
+      const aumento = Math.floor(jugador.empresa.ingresosNetos * 0.10);
+      jugador.empresa.actualizarIngresos(aumento);
       actualizarEmpresaDashboard();
-      showOutput('<strong>Optimización:</strong> -5% costo producción.');
+      showOutput('<strong>Nuevo proveedor:</strong> Disminuyes tu costo de producción en un 5% y aumentan tus ingresos en un 10%.');
       esperandoDecision = false;
     };
-    document.getElementById('no-7').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
-  },
-  // 8: Casilla 26 - Feria Comercial
-  () => {
-    clearDialog();
-    const html = `
-      <div class="alert alert-primary">
-        <strong>Feria Comercial</strong><br>Invierte $21,000 para ganar 3 casillas extra.
-        <div class="mt-3">
-          <button id="ok-8" class="btn btn-success me-2">Tomar</button>
-          <button id="no-8" class="btn btn-secondary">Pasar</button>
-        </div>
-      </div>`;
-    document.getElementById('dialog-container').innerHTML = html;
-    esperandoDecision = true;
-    document.getElementById('ok-8').onclick = () => {
+    document.getElementById('no-7').onclick = () => {
       clearDialog();
-      if (jugador.empresa.balance >= 21000) {
-        jugador.empresa.pagarGastos(21000);
-        jugador.posicion += 3;
-        actualizarTablero(); actualizarEmpresaDashboard();
-        showOutput('<strong>Feria Comercial:</strong> Avanzas 3 casillas.');
-      } else {
-        showOutput('<strong>Feria Comercial:</strong> Fondos insuficientes.');
-      }
+      showOutput('<em>Rechazas la oportunidad.</em>');
       esperandoDecision = false;
     };
-    document.getElementById('no-8').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
   },
-  // 9: Casilla 29 - Asesoría Profesional
-  () => {
-    clearDialog();
-    const html = `
-      <div class="alert alert-primary">
-        <strong>Asesoría Profesional</strong><br>Paga $6,000 para reducir costo de producción en un 10%.
-        <div class="mt-3">
-          <button id="ok-9" class="btn btn-success me-2">Tomar</button>
-          <button id="no-9" class="btn btn-secondary">Pasar</button>
-        </div>
-      </div>`;
-    document.getElementById('dialog-container').innerHTML = html;
-    esperandoDecision = true;
-    document.getElementById('ok-9').onclick = () => {
-      clearDialog();
-      if (jugador.empresa.balance >= 6000) {
-        jugador.empresa.pagarGastos(6000);
-        jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 0.90);
-        actualizarEmpresaDashboard();
-        showOutput('<strong>Asesoría:</strong> -10% costo producción.');
-      } else {
-        showOutput('<strong>Asesoría:</strong> Fondos insuficientes.');
-      }
-      esperandoDecision = false;
-    };
-    document.getElementById('no-9').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
-  },
-  // 10: Casilla 33 - Sustentabilidad
-  () => {
-    clearDialog();
-    const html = `
-      <div class="alert alert-primary">
-        <strong>Sustentabilidad</strong><br>Invierte $45,000 para recibir el 10% de tus ingresos netos.
-        <div class="mt-3">
-          <button id="ok-10" class="btn btn-success me-2">Tomar</button>
-          <button id="no-10" class="btn btn-secondary">Pasar</button>
-        </div>
-      </div>`;
-    document.getElementById('dialog-container').innerHTML = html;
-    esperandoDecision = true;
-    document.getElementById('ok-10').onclick = () => {
-      clearDialog();
-      if (jugador.empresa.balance >= 45000) {
-        jugador.empresa.pagarGastos(45000);
-        const inc = Math.floor(jugador.empresa.ingresosNetos * 0.10);
-        jugador.empresa.actualizarIngresos(inc);
-        actualizarEmpresaDashboard();
-        showOutput(`<strong>Sustentabilidad:</strong> +$${inc}.`);
-      } else {
-        showOutput('<strong>Sustentabilidad:</strong> Fondos insuficientes.');
-      }
-      esperandoDecision = false;
-    };
-    document.getElementById('no-10').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
-  },
-  // 11: Casilla 36 - Adquisición de Local
-  () => {
-    clearDialog();
-    const html = `
-      <div class="alert alert-primary">
-        <strong>Adquisición de Local</strong><br>Paga $52,000 y reduce gastos operacionales en un 50%.
-        <div class="mt-3">
-          <button id="ok-11" class="btn btn-success me-2">Tomar</button>
-          <button id="no-11" class="btn btn-secondary">Pasar</button>
-        </div>
-      </div>`;
-    document.getElementById('dialog-container').innerHTML = html;
-    esperandoDecision = true;
-    document.getElementById('ok-11').onclick = () => {
-      clearDialog();
-      if (jugador.empresa.balance >= 52000) {
-        jugador.empresa.pagarGastos(52000);
-        jugador.empresa.gastoOperacional = Math.floor(jugador.empresa.gastoOperacional * 0.50);
-        actualizarEmpresaDashboard();
-        showOutput('<strong>Adquisición de Local:</strong> -50% gastos operacionales.');
-      } else {
-        showOutput('<strong>Adquisición de Local:</strong> Fondos insuficientes.');
-      }
-      esperandoDecision = false;
-    };
-    document.getElementById('no-11').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
-  },
-  // 12: Casilla 39 - Mejora de Eficiencia
-  () => {
-    clearDialog();
-    const html = `
-      <div class="alert alert-primary">
-        <strong>Mejora de Eficiencia</strong><br>Reduce gastos operacionales en un 6%.
-        <div class="mt-3">
-          <button id="ok-12" class="btn btn-success me-2">Tomar</button>
-          <button id="no-12" class="btn btn-secondary">Pasar</button>
-        </div>
-      </div>`;
-    document.getElementById('dialog-container').innerHTML = html;
-    esperandoDecision = true;
-    document.getElementById('ok-12').onclick = () => {
-      clearDialog();
-      jugador.empresa.gastoOperacional = Math.floor(jugador.empresa.gastoOperacional * 0.94);
-      actualizarEmpresaDashboard();
-      showOutput('<strong>Mejora de Eficiencia:</strong> -6% gastos operacionales.');
-      esperandoDecision = false;
-    };
-    document.getElementById('no-12').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
-  },
-  // 13: Casilla 42 - Alianza Estratégica
-  () => {
-    clearDialog();
-    const html = `
-      <div class="alert alert-primary">
-        <strong>Alianza Estratégica</strong><br>Pierdes 1 turno y duplicas ingresos en la siguiente ronda.
-        <div class="mt-3">
-          <button id="ok-13" class="btn btn-success me-2">Tomar</button>
-          <button id="no-13" class="btn btn-secondary">Pasar</button>
-        </div>
-      </div>`;
-    document.getElementById('dialog-container').innerHTML = html;
-    esperandoDecision = true;
-    document.getElementById('ok-13').onclick = () => {
-      clearDialog();
-      jugador.turnosPerdidos++;
-      jugador.empresa.bonificacionVentas = 2.0;
-      jugador.empresa.rondasBonificacion = 1;
-      actualizarEmpresaDashboard();
-      showOutput('<strong>Alianza Estratégica:</strong> Pierdes 1 turno y duplicas ingresos siguiente ronda.');
-      esperandoDecision = false;
-    };
-    document.getElementById('no-13').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
-  },
-  // 14: Casilla 45 - Compra de Seguro
-  () => {
-    clearDialog();
-    const html = `
-      <div class="alert alert-primary">
-        <strong>Compra de Seguro</strong><br>Paga $40,000 para protegerte de las próximas 3 amenazas.
-        <div class="mt-3">
-          <button id="ok-14" class="btn btn-success me-2">Tomar</button>
-          <button id="no-14" class="btn btn-secondary">Pasar</button>
-        </div>
-      </div>`;
-    document.getElementById('dialog-container').innerHTML = html;
-    esperandoDecision = true;
-    document.getElementById('ok-14').onclick = () => {
-      clearDialog();
-      if (jugador.empresa.balance >= 40000) {
-        jugador.empresa.pagarGastos(40000);
-        jugador.segurosRestantes += 3;
-        actualizarEmpresaDashboard();
-        showOutput('<strong>Compra de Seguro:</strong> Protección para 3 amenazas.');
-      } else {
-        showOutput('<strong>Compra de Seguro:</strong> Fondos insuficientes.');
-      }
-      esperandoDecision = false;
-    };
-    document.getElementById('no-14').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
-  },
-  // 15: Casilla 49 - Devolución de Impuestos
-  () => {
-    clearDialog();
-    const html = `
-      <div class="alert alert-primary">
-        <strong>Devolución de Impuestos</strong><br>Recibes el 10% de tus ingresos netos actuales.
-        <div class="mt-3">
-          <button id="ok-15" class="btn btn-success me-2">Tomar</button>
-          <button id="no-15" class="btn btn-secondary">Pasar</button>
-        </div>
-      </div>`;
-    document.getElementById('dialog-container').innerHTML = html;
-    esperandoDecision = true;
-    document.getElementById('ok-15').onclick = () => {
-      clearDialog();
-      const dev = Math.floor(jugador.empresa.ingresosNetos * 0.10);
-      jugador.empresa.actualizarIngresos(dev);
-      actualizarEmpresaDashboard();
-      showOutput(`<strong>Devolución de Impuestos:</strong> +$${dev}.`);
-      esperandoDecision = false;
-    };
-    document.getElementById('no-15').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
-  },
-  // 16: Casilla 52 - Reinversión de Utilidades
-  () => {
-    clearDialog();
-    const html = `
-      <div class="alert alert-primary">
-        <strong>Reinversión de Utilidades</strong><br>Invierte el 60% de tus utilidades para duplicar ingresos por 2 rondas.
-        <div class="mt-3">
-          <button id="ok-16" class="btn btn-success me-2">Tomar</button>
-          <button id="no-16" class="btn btn-secondary">Pasar</button>
-        </div>
-      </div>`;
-    document.getElementById('dialog-container').innerHTML = html;
-    esperandoDecision = true;
-    document.getElementById('ok-16').onclick = () => {
-      clearDialog();
-      const inv = Math.floor((jugador.empresa.ingresosNetos) * 0.60);
-      if (jugador.empresa.balance >= inv) {
-        jugador.empresa.pagarGastos(inv);
-        jugador.empresa.bonificacionVentas = 2.0;
-        jugador.empresa.rondasBonificacion = 2;
-        actualizarEmpresaDashboard();
-        showOutput('<strong>Reinversión de Utilidades:</strong> Duplica ingresos por 2 rondas.');
-      } else {
-        showOutput('<strong>Reinversión de Utilidades:</strong> Fondos insuficientes.');
-      }
-      esperandoDecision = false;
-    };
-    document.getElementById('no-16').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
-  },
-  // 17: Casilla 55 - Expansión de Mercado
-  () => {
-    clearDialog();
-    const html = `
-      <div class="alert alert-primary">
-        <strong>Expansión de Mercado</strong><br>Paga $60,000, ganas 2 casillas extra y +20% ventas por 3 rondas.
-        <div class="mt-3">
-          <button id="ok-17" class="btn btn-success me-2">Tomar</button>
-          <button id="no-17" class="btn btn-secondary">Pasar</button>
-        </div>
-      </div>`;
-    document.getElementById('dialog-container').innerHTML = html;
-    esperandoDecision = true;
-    document.getElementById('ok-17').onclick = () => {
-      clearDialog();
-      if (jugador.empresa.balance >= 60000) {
-        jugador.empresa.pagarGastos(60000);
-        jugador.posicion += 2;
-        jugador.empresa.bonificacionVentas = 1.2;
-        jugador.empresa.rondasBonificacion = 3;
-        actualizarTablero(); actualizarEmpresaDashboard();
-        showOutput('<strong>Expansión de Mercado:</strong> +2 casillas y +20% ventas x3 rondas.');
-      } else {
-        showOutput('<strong>Expansión de Mercado:</strong> Fondos insuficientes.');
-      }
-      esperandoDecision = false;
-    };
-    document.getElementById('no-17').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
-  },
-  // 18: Casilla 58 - Registro de Marca
-  () => {
-    clearDialog();
-    const html = `
-      <div class="alert alert-primary">
-        <strong>Registro de Marca</strong><br>Paga $50,000 para aumentar ventas un 80% por 1 ronda.
-        <div class="mt-3">
-          <button id="ok-18" class="btn btn-success me-2">Tomar</button>
-          <button id="no-18" class="btn btn-secondary">Pasar</button>
-        </div>
-      </div>`;
-    document.getElementById('dialog-container').innerHTML = html;
-    esperandoDecision = true;
-    document.getElementById('ok-18').onclick = () => {
-      clearDialog();
-      if (jugador.empresa.balance >= 50000) {
-        jugador.empresa.pagarGastos(50000);
-        jugador.empresa.bonificacionVentas = 1.8;
-        jugador.empresa.rondasBonificacion = 1;
-        actualizarEmpresaDashboard();
-        showOutput('<strong>Registro de Marca:</strong> +80% ventas x1 ronda.');
-      } else {
-        showOutput('<strong>Registro de Marca:</strong> Fondos insuficientes.');
-      }
-      esperandoDecision = false;
-    };
-    document.getElementById('no-18').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
-  },
-  // 19: Casilla 61 - Programa de Fidelización
-  () => {
-    clearDialog();
-    const html = `
-      <div class="alert alert-primary">
-        <strong>Programa de Fidelización</strong><br>Paga $55,000 para aumentar ventas un 15% por 3 rondas.
-        <div class="mt-3">
-          <button id="ok-19" class="btn btn-success me-2">Tomar</button>
-          <button id="no-19" class="btn btn-secondary">Pasar</button>
-        </div>
-      </div>`;
-    document.getElementById('dialog-container').innerHTML = html;
-    esperandoDecision = true;
-    document.getElementById('ok-19').onclick = () => {
-      clearDialog();
-      if (jugador.empresa.balance >= 55000) {
-        jugador.empresa.pagarGastos(55000);
-        jugador.empresa.bonificacionVentas = 1.15;
-        jugador.empresa.rondasBonificacion = 3;
-        actualizarEmpresaDashboard();
-        showOutput('<strong>Programa de Fidelización:</strong> +15% ventas x3 rondas.');
-      } else {
-        showOutput('<strong>Programa de Fidelización:</strong> Fondos insuficientes.');
-      }
-      esperandoDecision = false;
-    };
-    document.getElementById('no-19').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
-  }
+  // ...existing code...
 ];
 
 
