@@ -146,14 +146,22 @@ function turno() {
     return;
   }
 
-  // 4) Avanzar y calcular ingreso
-  clearDialog();
+  // --- Validación de frontera: solo puedes ganar con el número exacto ---
   const prev = jugador.posicion;
   let np = prev + v;
-  if (np >= 64) {
-    np = 64;
+  if (np > 64) {
+    showOutput('Debes sacar el número exacto para llegar a la meta.');
+    return;
+  }
+  if (np === 64) {
     gameOver = true;
   }
+
+  // 4) Avanzar y calcular ingreso
+  clearDialog();
+  // const prev = jugador.posicion; // ya definido arriba
+  // let np = prev + v; // ya definido arriba
+  // if (np >= 64) { ... } // ya manejado arriba
 
   const ingres = jugador.empresa.calcularIngresoBase(np - prev);
   const neto  = jugador.empresa.actualizarIngresos(ingres, getTramoIVA(np));
@@ -261,30 +269,42 @@ const efectosOpp = [
     };
   },
 
-  // 2: Casilla 7 - Publicidad en Redes Sociales
+  // 2: Casilla 7 - Branding de la marca
   () => {
     clearDialog();
     const html = `
       <div class="alert alert-primary">
-        <strong>Publicidad en RRSS</strong><br>Invierte $5,000 para ganar $15,000 adicionales.
+        <strong>CASILLA 7: Branding de la marca</strong><br>
+        <em>El posicionamiento de tu marca requiere que hagas una estrategia de branding. Para esto debes invertir $8,000.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Condición:</b> Requiere invertir $18,000</li>
+          <li><b>Efecto:</b> Aumenta tus ingresos en un 10% en las siguientes 2 rondas por aumento de visibilidad.</li>
+        </ul>
         <div class="mt-3">
-          <button id="ok-2" class="btn btn-success me-2">Tomar</button>
-          <button id="no-2" class="btn btn-secondary">Pasar</button>
+          <button id="ok-2" class="btn btn-success me-2">Invertir</button>
+          <button id="no-2" class="btn btn-secondary">Rechazar</button>
         </div>
       </div>`;
     document.getElementById('dialog-container').innerHTML = html;
     esperandoDecision = true;
     document.getElementById('ok-2').onclick = () => {
       clearDialog();
-      if (jugador.empresa.balance >= 5000) {
-        jugador.empresa.pagarGastos(5000);
-        jugador.empresa.actualizarIngresos(15000);
+      if (jugador.empresa.balance >= 18000) {
+        jugador.empresa.pagarGastos(18000);
+        jugador.empresa.bonificacionVentas = 1.10;
+        jugador.empresa.rondasBonificacion = 2;
         actualizarEmpresaDashboard();
-        showOutput('<strong>Publicidad en RRSS:</strong> Ganaste $15,000.');
-      } else showOutput('<strong>Publicidad RRSS:</strong> Fondos insuficientes.');
+        showOutput('<strong>Branding:</strong> Tus ingresos aumentan un 10% en las siguientes 2 rondas.');
+      } else {
+        showOutput('<strong>Branding:</strong> Fondos insuficientes.');
+      }
       esperandoDecision = false;
     };
-    document.getElementById('no-2').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
+    document.getElementById('no-2').onclick = () => {
+      clearDialog();
+      showOutput('<em>Rechazas la oportunidad.</em>');
+      esperandoDecision = false;
+    };
   },
   // 3: Casilla 10 - Campaña de Marketing
   () => {
@@ -502,19 +522,19 @@ const efectosOpp = [
       esperandoDecision = false;
     };
   },
-  // 8: Casilla 28 - Capacitación del Personal
+  // 8: Casilla 26 - Participación en feria de emprendimiento
   () => {
     clearDialog();
     const html = `
       <div class="alert alert-primary">
-        <strong>CASILLA 28: Capacitación del Personal</strong><br>
-        <em>Invertir en la capacitación de tu personal puede mejorar la productividad y calidad.</em>
+        <strong>CASILLA 26: Participación en feria de emprendimiento</strong><br>
+        <em>Tu empresa fue seleccionada para participar en una feria local. Allí logras nuevos contactos y oportunidades comerciales.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Debes invertir:</b> $10,000</li>
-          <li><b>Efecto:</b> Aumenta tus ingresos en un 5% por 3 rondas</li>
+          <li><b>Condición:</b> Debes invertir $21,000 en montaje y transporte al evento</li>
+          <li><b>Efecto:</b> Avanzas 3 casillas adicionales en la siguiente ronda y aumentas en un 10% la venta de la siguiente ronda.</li>
         </ul>
         <div class="mt-3">
-          <button id="ok-8" class="btn btn-success me-2">Aceptar</button>
+          <button id="ok-8" class="btn btn-success me-2">Invertir</button>
           <button id="no-8" class="btn btn-secondary">Rechazar</button>
         </div>
       </div>`;
@@ -522,14 +542,16 @@ const efectosOpp = [
     esperandoDecision = true;
     document.getElementById('ok-8').onclick = () => {
       clearDialog();
-      if (jugador.empresa.balance >= 10000) {
-        jugador.empresa.pagarGastos(10000);
-        jugador.empresa.rondasBonificacion += 3;
-        jugador.empresa.bonificacionVentas *= 1.05;
+      if (jugador.empresa.balance >= 21000) {
+        jugador.empresa.pagarGastos(21000);
+        jugador.posicion += 3;
+        jugador.empresa.bonificacionVentas = 1.10;
+        jugador.empresa.rondasBonificacion = 1;
+        actualizarTablero();
         actualizarEmpresaDashboard();
-        showOutput('<strong>Capacitación:</strong> Aumentan tus ingresos en un 5% por 3 rondas.');
+        showOutput('<strong>Feria de emprendimiento:</strong> Avanzas 3 casillas y aumentas en un 10% la venta de la siguiente ronda.');
       } else {
-        showOutput('<strong>Capacitación:</strong> Fondos insuficientes.');
+        showOutput('<strong>Feria de emprendimiento:</strong> Fondos insuficientes.');
       }
       esperandoDecision = false;
     };
@@ -539,6 +561,7 @@ const efectosOpp = [
       esperandoDecision = false;
     };
   },
+
   // 9: Casilla 29 - Contratación de mentor o asesor experto
   () => {
     clearDialog();
