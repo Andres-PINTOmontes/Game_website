@@ -1096,4 +1096,10 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('btn-iniciar').addEventListener('click',initJuego);
   document.getElementById('btn-turno').addEventListener('click',turno);
 
+  // Si tienes los botones de dado aleatorio y limpiar log, descomenta estas líneas:
+  // document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
+  // document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
+});
+
+
 
