@@ -82,9 +82,14 @@ header p {
   transform: scale(1.1);
   border-color: var(--accent);
 }
-.board-space.opp-early {
-  background: #A1DAB4 !important;
-}
+.board-space.opp-early      { background: #A1DAB4 !important; }
+.board-space.opp-mid1       { background: #F6EB61 !important; }
+.board-space.opp-mid2       { background: #FBB040 !important; }
+.board-space.opp-late       { background: #FA6F64 !important; }
+.board-space.threat-early   { background: #007A33 !important; color: #fff !important; }
+.board-space.threat-mid1    { background: #FFEF16 !important; }
+.board-space.threat-mid2    { background: #FF6A13 !important; }
+.board-space.threat-late    { background: #F40014 !important; color: #fff !important; }
 .player-token {
   position: absolute;
   bottom: 6px;
