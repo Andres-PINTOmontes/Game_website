@@ -682,7 +682,154 @@ const efectosOpp = [
       esperandoDecision = false;
     };
   },
-  // ...existing code...
+  // 13: Casilla 45 - Aumento de Capital por Inversores
+  () => {
+    clearDialog();
+    const html = `
+      <div class="alert alert-primary">
+        <strong>CASILLA 45: Aumento de Capital por Inversores</strong><br>
+        <em>Lograste convencer a unos inversores para que aporten capital a cambio de un pequeño porcentaje de tu empresa.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Condición:</b> N.A</li>
+          <li><b>Efecto:</b> Aumenta tu balance en $30,000.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-13" class="btn btn-success me-2">Aceptar</button>
+        </div>
+      </div>`;
+    document.getElementById('dialog-container').innerHTML = html;
+    esperandoDecision = true;
+    document.getElementById('ok-13').onclick = () => {
+      clearDialog();
+      jugador.empresa.balance += 30000;
+      actualizarEmpresaDashboard();
+      showOutput('<strong>Aumento de Capital:</strong> Tu balance aumenta en $30,000.');
+      esperandoDecision = false;
+    };
+  },
+  // 14: Casilla 48 - Subvención Gubernamental
+  () => {
+    clearDialog();
+    const html = `
+      <div class="alert alert-primary">
+        <strong>CASILLA 48: Subvención Gubernamental</strong><br>
+        <em>El gobierno otorga una subvención a tu empresa por fomentar el empleo juvenil.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Condición:</b> N.A</li>
+          <li><b>Efecto:</b> Recibes $20,000 y tus gastos operacionales disminuyen en un 10% por 3 rondas.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-14" class="btn btn-success me-2">Aceptar</button>
+        </div>
+      </div>`;
+    document.getElementById('dialog-container').innerHTML = html;
+    esperandoDecision = true;
+    document.getElementById('ok-14').onclick = () => {
+      clearDialog();
+      jugador.empresa.actualizarIngresos(20000);
+      jugador.empresa.gastoOperacional = Math.floor(jugador.empresa.gastoOperacional * 0.90);
+      jugador.empresa.rondasBonificacion += 3;
+      actualizarEmpresaDashboard();
+      showOutput('<strong>Subvención Gubernamental:</strong> Recibes $20,000 y tus gastos operacionales disminuyen en un 10% por 3 rondas.');
+      esperandoDecision = false;
+    };
+  },
+  // 15: Casilla 49 - Devolución del IVA
+  () => {
+    clearDialog();
+    const html = `
+      <div class="alert alert-primary">
+        <strong>CASILLA 49: Devolución del IVA</strong><br>
+        <em>Se te hace devolución del 10% del IVA pagado en la última etapa.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Condición:</b> N.A</li>
+          <li><b>Efecto:</b> Te devuelven 10% del valor pagado en impuestos de la última etapa.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-15" class="btn btn-success me-2">Recibir devolución</button>
+        </div>
+      </div>`;
+    document.getElementById('dialog-container').innerHTML = html;
+    esperandoDecision = true;
+    document.getElementById('ok-15').onclick = () => {
+      clearDialog();
+      // Calcula el IVA pagado en el último movimiento
+      // El IVA se calcula sobre el ingreso base del último avance
+      const iva = getTramoIVA(jugador.posicion);
+      const prev = jugador.posicion - jugador.lastRoll;
+      const ingresoBase = jugador.empresa.calcularIngresoBase(jugador.posicion - prev);
+      const ivaPagado = ingresoBase * (iva / 100);
+      const devolucion = Math.floor(ivaPagado * 0.10);
+      jugador.empresa.actualizarIngresos(devolucion);
+      actualizarEmpresaDashboard();
+      showOutput(`<strong>Devolución del IVA:</strong> Recibes $${devolucion} (10% del IVA pagado en la última etapa).`);
+      esperandoDecision = false;
+    };
+  },
+
+  // 16: Casilla 52 - Inviertes tus utilidades en acciones de una empresa externa
+  () => {
+    clearDialog();
+    const html = `
+      <div class="alert alert-primary">
+        <strong>CASILLA 52: Inviertes tus utilidades en acciones de una empresa externa</strong><br>
+        <em>Destinas el 60% de tus utilidades a invertir en el mercado de valores. Aunque existe cierto riesgo, la diversificación te brinda un retorno positivo que duplica tus ingresos en las próximas 2 rondas.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Condición:</b> Invertir el 60% de tus ingresos</li>
+          <li><b>Efecto:</b> Lanza un dado: 1-2 pierdes 20% de los ingresos; 3-6 duplicas los ingresos por 2 rondas.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-16" class="btn btn-success me-2">Invertir y lanzar dado</button>
+          <button id="no-16" class="btn btn-secondary">Rechazar</button>
+        </div>
+      </div>`;
+    document.getElementById('dialog-container').innerHTML = html;
+    esperandoDecision = true;
+    document.getElementById('ok-16').onclick = () => {
+      clearDialog();
+      const inversion = Math.floor(jugador.empresa.ingresosNetos * 0.60);
+      if (jugador.empresa.balance >= inversion) {
+        jugador.empresa.pagarGastos(inversion);
+        // Pedir al usuario que ingrese el resultado del dado
+        document.getElementById('dialog-container').innerHTML = `
+          <div class="alert alert-info">
+            Ingresa el resultado de tu dado (1-6):<br>
+            <input id="dado-c52" type="number" min="1" max="6" class="form-control w-auto d-inline-block" style="width:80px;display:inline-block;" placeholder="Dado">
+            <button id="conf-c52" class="btn btn-primary mt-2">Confirmar</button>
+          </div>`;
+        document.getElementById('conf-c52').onclick = () => {
+          const valor = parseInt(document.getElementById('dado-c52').value);
+          if (isNaN(valor) || valor < 1 || valor > 6) {
+            alert('Ingresa un valor entre 1 y 6.');
+            return;
+          }
+          clearDialog();
+          if (valor === 1 || valor === 2) {
+            // Pierde 20% de los ingresos netos actuales
+            const perdida = Math.floor(jugador.empresa.ingresosNetos * 0.20);
+            jugador.empresa.ingresosNetos -= perdida;
+            jugador.empresa.balance -= perdida;
+            showOutput('<strong>¡Mala suerte!</strong> Pierdes el 20% de tus ingresos.');
+          } else {
+            // Duplica ingresos por 2 rondas
+            jugador.empresa.bonificacionVentas = 2.0;
+            jugador.empresa.rondasBonificacion = 2;
+            showOutput('<strong>¡Inversión exitosa!</strong> Duplicas tus ingresos por 2 rondas.');
+          }
+          actualizarEmpresaDashboard();
+          esperandoDecision = false;
+        };
+      } else {
+        showOutput('<strong>Inversión en acciones:</strong> Fondos insuficientes.');
+        esperandoDecision = false;
+      }
+    };
+    document.getElementById('no-16').onclick = () => {
+      clearDialog();
+      showOutput('<em>Rechazas la oportunidad.</em>');
+      esperandoDecision = false;
+    };
+  },
 ];
 
 
@@ -883,6 +1030,5 @@ document.addEventListener('DOMContentLoaded',()=>{
   // document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
   // document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
 });
-
 
 
