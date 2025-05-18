@@ -931,15 +931,15 @@ const efectosOpp = [
 
 // --- Efectos para Casillas de Amenaza (índices 0–19) ---
 const efectosAmen = [
-  // Casilla 3: Inspección Fiscal. Pierdes 2 turnos.
+  // Casilla 3: Inspección Fiscal. Pierdes $8,000 y un turno.
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-danger">
-        <strong>CASILLA 3: Inspección Fiscal</strong><br>
-        <em>Una inspección fiscal inesperada detiene tus operaciones.</em>
+        <strong>CASILLA 3: INSPECCIÓN FISCAL</strong><br>
+        <em>Una inspección fiscal inesperada detiene tus operaciones y te sancionan económicamente.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Pierdes 2 turnos.</li>
+          <li><b>Efecto:</b> Pierdes $8,000 y un turno.</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-0" class="btn btn-danger">Aceptar efecto</button>
@@ -947,9 +947,11 @@ const efectosAmen = [
       </div>`;
     esperandoDecision = true;
     document.getElementById('ok-amen-0').onclick = () => {
-      jugador.turnosPerdidos += 2;
+      jugador.empresa.pagarGastos(8000);
+      jugador.turnosPerdidos += 1;
+      actualizarEmpresaDashboard();
       clearDialog();
-      showOutput(`<strong>Inspección Fiscal</strong><br>Pierdes 2 turnos.`);
+      showOutput(`<strong>Inspección Fiscal</strong><br>Pierdes $8,000 y un turno.`);
       esperandoDecision = false;
     };
   },
@@ -1007,15 +1009,15 @@ const efectosAmen = [
       esperandoDecision = false;
     };
   },
-  // Casilla 12: Fallo en el Sistema de Ventas. Pierdes 5% de bonificaciones de ventas por 2 rondas.
+  // Casilla 12: Fallo en el Sistema de Ventas. Pierdes $5,000 y retrocedes 1 casilla.
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-danger">
-        <strong>CASILLA 12: Fallo en el Sistema de Ventas</strong><br>
-        <em>Un fallo en el sistema de ventas afecta tus bonificaciones.</em>
+        <strong>CASILLA 12: FALLO EN EL SISTEMA DE VENTAS</strong><br>
+        <em>Un fallo en el sistema de ventas afecta tus operaciones.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Pierdes 5% de bonificaciones de ventas por 2 rondas.</li>
+          <li><b>Efecto:</b> Pierdes $5,000 y retrocedes 1 casilla.</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-3" class="btn btn-danger">Aceptar efecto</button>
@@ -1023,23 +1025,24 @@ const efectosAmen = [
       </div>`;
     esperandoDecision = true;
     document.getElementById('ok-amen-3').onclick = () => {
-      jugador.empresa.bonificacionVentas *= 0.95;
-      jugador.empresa.rondasBonificacion = Math.max(jugador.empresa.rondasBonificacion, 2);
+      jugador.empresa.pagarGastos(5000);
+      jugador.casilla = Math.max(0, jugador.casilla - 1);
+      actualizarTablero();
       actualizarEmpresaDashboard();
       clearDialog();
-      showOutput(`<strong>Fallo en Sistema de Ventas</strong><br>Pierdes 5% de bonificaciones x2 rondas.`);
+      showOutput(`<strong>Fallo en el Sistema de Ventas</strong><br>Pierdes $5,000 y retrocedes 1 casilla.`);
       esperandoDecision = false;
     };
   },
-  // Casilla 15: Paro de Producción. Retrocedes 1 casilla y bonificaciones limitadas por 4 rondas.
+  // Casilla 15: Paro de Producción. Pierdes $7,000 y no puedes lanzar dado el próximo turno.
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-danger">
-        <strong>CASILLA 15: Paro de Producción</strong><br>
-        <em>Un paro inesperado detiene la producción y limita tus bonificaciones.</em>
+        <strong>CASILLA 15: PARO DE PRODUCCIÓN</strong><br>
+        <em>Un paro inesperado detiene la producción y genera pérdidas inmediatas.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Retrocedes 1 casilla y bonificaciones limitadas por 4 rondas.</li>
+          <li><b>Efecto:</b> Pierdes $7,000 y no puedes lanzar dado el próximo turno.</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-4" class="btn btn-danger">Aceptar efecto</button>
@@ -1047,12 +1050,11 @@ const efectosAmen = [
       </div>`;
     esperandoDecision = true;
     document.getElementById('ok-amen-4').onclick = () => {
-      jugador.casilla = Math.max(0, jugador.casilla - 1);
-      jugador.empresa.limiteBonificaciones = 4;
-      actualizarTablero();
+      jugador.empresa.pagarGastos(7000);
+      jugador.turnosPerdidos += 1;
       actualizarEmpresaDashboard();
       clearDialog();
-      showOutput(`<strong>Paro de Producción</strong><br>Retrocedes 1 casilla y bonificaciones limitadas por 4 rondas.`);
+      showOutput(`<strong>Paro de Producción</strong><br>Pierdes $7,000 y pierdes un turno.`);
       esperandoDecision = false;
     };
   },
@@ -1339,15 +1341,15 @@ const efectosAmen = [
       esperandoDecision = false;
     };
   },
-  // Casilla 54: Cancelación de Campaña. Pierdes 10% de bonificaciones de ventas.
+  // Casilla 54: Cancelación de Campaña. Pierdes $10,000 y tu margen de ganancia baja 2%.
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-danger">
-        <strong>CASILLA 54: Cancelación de Campaña</strong><br>
-        <em>Una campaña importante es cancelada, afectando tus bonificaciones.</em>
+        <strong>CASILLA 54: CANCELACIÓN DE CAMPAÑA</strong><br>
+        <em>Una campaña importante es cancelada, afectando tus ingresos y rentabilidad.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Pierdes 10% de bonificaciones de ventas.</li>
+          <li><b>Efecto:</b> Pierdes $10,000 y tu margen de ganancia baja 2%.</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-17" class="btn btn-danger">Aceptar efecto</button>
@@ -1355,10 +1357,11 @@ const efectosAmen = [
       </div>`;
     esperandoDecision = true;
     document.getElementById('ok-amen-17').onclick = () => {
-      jugador.empresa.bonificacionVentas *= 0.90;
+      jugador.empresa.pagarGastos(10000);
+      jugador.empresa.margenGanancia *= 0.98;
       actualizarEmpresaDashboard();
       clearDialog();
-      showOutput(`<strong>Cancelación de Campaña</strong><br>Pierdes 10% de tus bonificaciones de ventas.`);
+      showOutput(`<strong>Cancelación de Campaña</strong><br>Pierdes $10,000 y tu margen de ganancia baja 2%.`);
       esperandoDecision = false;
     };
   },
@@ -1460,6 +1463,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   // document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
   // document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
 });
+
 
 
 
