@@ -1130,15 +1130,15 @@ const efectosAmen = [
       esperandoDecision = false;
     };
   },
-  // Casilla 28: Aumento de Materia Prima. Aumenta +5% costo producción.
+  // Casilla 28: AUMENTA EL PRECIO DE LA MATERIA PRIMA. AUMENTA TU COSTO DE PRODUCCIÓN EN UN 15%
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-danger">
-        <strong>CASILLA 28: Aumento de Materia Prima</strong><br>
-        <em>El precio de la materia prima sube inesperadamente.</em>
+        <strong>CASILLA 28: AUMENTA EL PRECIO DE LA MATERIA PRIMA</strong><br>
+        <em>El precio de tus insumos principales sube. Tus costos se disparan.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Costo de producción +5%.</li>
+          <li><b>Efecto:</b> AUMENTA TU COSTO DE PRODUCCIÓN EN UN 15%</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-8" class="btn btn-danger">Aceptar efecto</button>
@@ -1146,22 +1146,22 @@ const efectosAmen = [
       </div>`;
     esperandoDecision = true;
     document.getElementById('ok-amen-8').onclick = () => {
-      jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 1.05);
+      jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 1.15);
       actualizarEmpresaDashboard();
       clearDialog();
-      showOutput(`<strong>Aumento de Materia Prima</strong><br>Costo de producción +5%.`);
+      showOutput(`<strong>AUMENTA EL PRECIO DE LA MATERIA PRIMA</strong><br>Tu costo de producción aumenta en un 15%.`);
       esperandoDecision = false;
     };
   },
-  // Casilla 31: Problema de Calidad. Retrocedes 2 casillas.
+  // Casilla 31: PROBLEMA DE CALIDAD. AUMENTA EN UN 15% TU COSTO DE PRODUCCIÓN T DISMINUYE UN 15% TUS INGRESOS
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-danger">
-        <strong>CASILLA 31: Problema de Calidad</strong><br>
-        <em>Un problema de calidad obliga a retirar productos del mercado.</em>
+        <strong>CASILLA 31: PROBLEMA DE CALIDAD</strong><br>
+        <em>Un lote sale defectuoso. Recibes devoluciones y quejas de clientes.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Retrocedes 2 casillas.</li>
+          <li><b>Efecto:</b> AUMENTA EN UN 15% TU COSTO DE PRODUCCIÓN Y DISMINUYE UN 15% TUS INGRESOS</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-9" class="btn btn-danger">Aceptar efecto</button>
@@ -1169,23 +1169,24 @@ const efectosAmen = [
       </div>`;
     esperandoDecision = true;
     document.getElementById('ok-amen-9').onclick = () => {
-      jugador.casilla = Math.max(0, jugador.casilla - 2);
-      actualizarTablero();
+      jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 1.15);
+      const ded = Math.floor(jugador.empresa.ingresoNeto * 0.15);
+      jugador.empresa.ingresoNeto -= ded;
       actualizarEmpresaDashboard();
       clearDialog();
-      showOutput(`<strong>Problema de Calidad</strong><br>Retrocedes 2 casillas.`);
+      showOutput(`<strong>PROBLEMA DE CALIDAD</strong><br>Tu costo de producción aumenta en un 15% y pierdes 15% de tus ingresos (-$${ded}).`);
       esperandoDecision = false;
     };
   },
-  // Casilla 35: Incendio en Planta. Retrocedes 3 casillas y pierdes 3 turnos.
+  // Casilla 35: INCENDIO EN LA PLANTA. RETROCEDES 3 CASILLAS Y PIERDES 3 TURNOS
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-danger">
-        <strong>CASILLA 35: Incendio en Planta</strong><br>
-        <em>Un incendio en la planta detiene la producción y te hace retroceder.</em>
+        <strong>CASILLA 35: INCENDIO EN LA PLANTA</strong><br>
+        <em>Un accidente destruye parte de tu infraestructura. Pérdida material considerable.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Retrocedes 3 casillas y pierdes 3 turnos.</li>
+          <li><b>Efecto:</b> RETROCEDES 3 CASILLAS Y PIERDES 3 TURNOS</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-10" class="btn btn-danger">Aceptar efecto</button>
@@ -1198,19 +1199,19 @@ const efectosAmen = [
       actualizarTablero();
       actualizarEmpresaDashboard();
       clearDialog();
-      showOutput(`<strong>Incendio en Planta</strong><br>Retrocedes 3 casillas y pierdes 3 turnos.`);
+      showOutput(`<strong>INCENDIO EN LA PLANTA</strong><br>Retrocedes 3 casillas y pierdes 3 turnos.`);
       esperandoDecision = false;
     };
   },
-  // Casilla 38: Fraude Interno. Pierdes USD 30,000 de ingresos netos.
+  // Casilla 38: CIBERATAQUE. PIERDES $80,000 DE INGRESOS
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-danger">
-        <strong>CASILLA 38: Fraude Interno</strong><br>
-        <em>Un fraude interno genera grandes pérdidas económicas.</em>
+        <strong>CASILLA 38: CIBERATAQUE</strong><br>
+        <em>Un exempleado filtra información estratégica.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Pierdes $30,000 de ingresos netos.</li>
+          <li><b>Efecto:</b> PIERDES $80,000 DE INGRESOS</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-11" class="btn btn-danger">Aceptar efecto</button>
@@ -1218,14 +1219,14 @@ const efectosAmen = [
       </div>`;
     esperandoDecision = true;
     document.getElementById('ok-amen-11').onclick = () => {
-      if (jugador.empresa.ingresoNeto >= 30000) {
-        jugador.empresa.pagarGastos(30000);
+      if (jugador.empresa.ingresoNeto >= 80000) {
+        jugador.empresa.pagarGastos(80000);
         actualizarEmpresaDashboard();
         clearDialog();
-        showOutput(`<strong>Fraude Interno</strong><br>Pierdes $30,000.`);
+        showOutput(`<strong>CIBERATAQUE</strong><br>Pierdes $80,000 de ingresos.`);
       } else {
         clearDialog();
-        showOutput(`<strong>Fraude Interno</strong><br>No puedes cubrir $30,000. ¡GAME OVER!`);
+        showOutput(`<strong>CIBERATAQUE</strong><br>No puedes cubrir $80,000. ¡GAME OVER!`);
         gameOver = true;
       }
       esperandoDecision = false;
@@ -1457,6 +1458,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   // document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
   // document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
 });
+
 
 
 
