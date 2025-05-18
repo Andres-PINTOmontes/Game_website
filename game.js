@@ -751,7 +751,7 @@ const efectosAmen = [
   () => {
     jugador.posicion = Math.max(0, jugador.posicion - 1);
     jugador.empresa.limiteBonificaciones = 4;
-    actualizarTablero();
+    // actualizarTablero();
     actualizarEmpresaDashboard();
     showOutput(`<strong>Paro de Producción</strong><br>Retrocedes 1 casilla y bonificaciones limitadas por 4 rondas.`);
   },
@@ -780,7 +780,8 @@ const efectosAmen = [
   () => {
     jugador.posicion = Math.max(0, jugador.posicion - 2);
     jugador.turnosPerdidos += 2;
-    actualizarTablero();
+    // actualizarTablero();
+    actualizarEmpresaDashboard();
     showOutput(`<strong>Sanción por Incumplimiento</strong><br>Retrocedes 2 casillas y pierdes 2 turnos.`);
   },
   // Casilla 25: Competencia Desleal. Pierdes 5% de margen de ganancia.
@@ -908,7 +909,3 @@ document.addEventListener('DOMContentLoaded',()=>{
   // document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
 });
 
-/* Utility */
-.text-center {
-  text-align: center;
-}
