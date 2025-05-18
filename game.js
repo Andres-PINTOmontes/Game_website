@@ -96,9 +96,29 @@ function actualizarTablero(){
     let cell=tablero[i];
     const d=document.createElement('div'); d.className='board-space';
     if(jugador&&jugador.casilla===i)d.classList.add('active');
-    // Añadir color especial a oportunidades hasta la 16
-    if(cell.tipo==='oportunidad' && cell.indiceEfecto!==null && cell.indiceEfecto<=16){
-      d.classList.add('opp-early');
+    // Oportunidades
+    if(cell.tipo==='oportunidad' && cell.indiceEfecto!==null){
+      if(cell.indiceEfecto<=16){
+        d.classList.add('opp-early');
+      } else if(cell.indiceEfecto>16 && cell.indiceEfecto<=32){
+        d.classList.add('opp-mid1');
+      } else if(cell.indiceEfecto>32 && i<=48){
+        d.classList.add('opp-mid2');
+      } else if(i>48 && i<=63){
+        d.classList.add('opp-late');
+      }
+    }
+    // Amenazas
+    if(cell.tipo==='amenaza' && cell.indiceEfecto!==null){
+      if(i<=16){
+        d.classList.add('threat-early');
+      } else if(i>16 && i<=32){
+        d.classList.add('threat-mid1');
+      } else if(i>32 && i<=48){
+        d.classList.add('threat-mid2');
+      } else if(i>48 && i<=63){
+        d.classList.add('threat-late');
+      }
     }
     d.innerHTML=`<div>${i}</div><div>${cell.icon}</div>`;
     grid.appendChild(d);
