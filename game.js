@@ -502,9 +502,188 @@ const efectosOpp = [
       esperandoDecision = false;
     };
   },
+  // 8: Casilla 28 - Capacitación del Personal
+  () => {
+    clearDialog();
+    const html = `
+      <div class="alert alert-primary">
+        <strong>CASILLA 28: Capacitación del Personal</strong><br>
+        <em>Invertir en la capacitación de tu personal puede mejorar la productividad y calidad.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Debes invertir:</b> $10,000</li>
+          <li><b>Efecto:</b> Aumenta tus ingresos en un 5% por 3 rondas</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-8" class="btn btn-success me-2">Aceptar</button>
+          <button id="no-8" class="btn btn-secondary">Rechazar</button>
+        </div>
+      </div>`;
+    document.getElementById('dialog-container').innerHTML = html;
+    esperandoDecision = true;
+    document.getElementById('ok-8').onclick = () => {
+      clearDialog();
+      if (jugador.empresa.balance >= 10000) {
+        jugador.empresa.pagarGastos(10000);
+        jugador.empresa.rondasBonificacion += 3;
+        jugador.empresa.bonificacionVentas *= 1.05;
+        actualizarEmpresaDashboard();
+        showOutput('<strong>Capacitación:</strong> Aumentan tus ingresos en un 5% por 3 rondas.');
+      } else {
+        showOutput('<strong>Capacitación:</strong> Fondos insuficientes.');
+      }
+      esperandoDecision = false;
+    };
+    document.getElementById('no-8').onclick = () => {
+      clearDialog();
+      showOutput('<em>Rechazas la oportunidad.</em>');
+      esperandoDecision = false;
+    };
+  },
+  // 9: Casilla 29 - Contratación de mentor o asesor experto
+  () => {
+    clearDialog();
+    const html = `
+      <div class="alert alert-primary">
+        <strong>CASILLA 29: Contratación de mentor o asesor experto</strong><br>
+        <em>Un experto en negocios decide apoyarte como mentor. Gracias a sus consejos, logras optimizar procesos clave.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Debes pagar honorarios de asesoría:</b> $6,000</li>
+          <li><b>Efecto:</b> Disminución de costos de producción en un 10%</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-9" class="btn btn-success me-2">Aceptar</button>
+          <button id="no-9" class="btn btn-secondary">Rechazar</button>
+        </div>
+      </div>`;
+    document.getElementById('dialog-container').innerHTML = html;
+    esperandoDecision = true;
+    document.getElementById('ok-9').onclick = () => {
+      clearDialog();
+      if (jugador.empresa.balance >= 6000) {
+        jugador.empresa.pagarGastos(6000);
+        jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 0.90);
+        actualizarEmpresaDashboard();
+        showOutput('<strong>Mentor contratado:</strong> Disminución de costos de producción en un 10%.');
+      } else {
+        showOutput('<strong>Mentor:</strong> Fondos insuficientes.');
+      }
+      esperandoDecision = false;
+    };
+    document.getElementById('no-9').onclick = () => {
+      clearDialog();
+      showOutput('<em>Rechazas la oportunidad.</em>');
+      esperandoDecision = false;
+    };
+  },
+
+  // 10: Casilla 33 - Inversión en Sustentabilidad
+  () => {
+    clearDialog();
+    const html = `
+      <div class="alert alert-primary">
+        <strong>CASILLA 33: Inversión en Sustentabilidad</strong><br>
+        <em>Tu empresa implementaría prácticas ecológicas que mejoran su reputación.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Condición:</b> Requiere una inversión inicial de $45,000</li>
+          <li><b>Efecto:</b> Aumenta los ingresos en un 10%</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-10" class="btn btn-success me-2">Invertir</button>
+          <button id="no-10" class="btn btn-secondary">Rechazar</button>
+        </div>
+      </div>`;
+    document.getElementById('dialog-container').innerHTML = html;
+    esperandoDecision = true;
+    document.getElementById('ok-10').onclick = () => {
+      clearDialog();
+      if (jugador.empresa.balance >= 45000) {
+        jugador.empresa.pagarGastos(45000);
+        const inc = Math.floor(jugador.empresa.ingresosNetos * 0.10);
+        jugador.empresa.actualizarIngresos(inc);
+        actualizarEmpresaDashboard();
+        showOutput('<strong>Inversión en Sustentabilidad:</strong> Tus ingresos aumentan en un 10%.');
+      } else {
+        showOutput('<strong>Inversión en Sustentabilidad:</strong> Fondos insuficientes.');
+      }
+      esperandoDecision = false;
+    };
+    document.getElementById('no-10').onclick = () => {
+      clearDialog();
+      showOutput('<em>Rechazas la oportunidad.</em>');
+      esperandoDecision = false;
+    };
+  },
+
+  // 11: Casilla 36 - Venta del local de tu establecimiento
+  () => {
+    clearDialog();
+    const html = `
+      <div class="alert alert-primary">
+        <strong>CASILLA 36: Venta del local de tu establecimiento</strong><br>
+        <em>El dueño del local comercial en donde se encuentra establecido tu negocio desea venderlo por $52,000. Comprarlo representaría un 50% menos en los gastos operacionales.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Condición:</b> Compra del local por $52,000</li>
+          <li><b>Efecto:</b> Disminución del 50% en los gastos operacionales</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-11" class="btn btn-success me-2">Comprar</button>
+          <button id="no-11" class="btn btn-secondary">Rechazar</button>
+        </div>
+      </div>`;
+    document.getElementById('dialog-container').innerHTML = html;
+    esperandoDecision = true;
+    document.getElementById('ok-11').onclick = () => {
+      clearDialog();
+      if (jugador.empresa.balance >= 52000) {
+        jugador.empresa.pagarGastos(52000);
+        jugador.empresa.gastoOperacional = Math.floor(jugador.empresa.gastoOperacional * 0.50);
+        actualizarEmpresaDashboard();
+        showOutput('<strong>Compra del local:</strong> Disminución del 50% en los gastos operacionales.');
+      } else {
+        showOutput('<strong>Compra del local:</strong> Fondos insuficientes.');
+      }
+      esperandoDecision = false;
+    };
+    document.getElementById('no-11').onclick = () => {
+      clearDialog();
+      showOutput('<em>Rechazas la oportunidad.</em>');
+      esperandoDecision = false;
+    };
+  },
+
+  // 12: Casilla 39 - Talento Humano Joven
+  () => {
+    clearDialog();
+    const html = `
+      <div class="alert alert-primary">
+        <strong>CASILLA 39: Talento Humano Joven</strong><br>
+        <em>Gran porcentaje de tu empresa mantiene un talento humano joven. El gobierno ha implementado incentivos para empresas que contraten jóvenes, en consecuencia tu costo corporativo baja en un 6% (bonificación).</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Condición:</b> N.A</li>
+          <li><b>Efecto:</b> Disminuye en un 6% tus Gastos Operacionales.</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-12" class="btn btn-success me-2">Aceptar</button>
+          <button id="no-12" class="btn btn-secondary">Rechazar</button>
+        </div>
+      </div>`;
+    document.getElementById('dialog-container').innerHTML = html;
+    esperandoDecision = true;
+    document.getElementById('ok-12').onclick = () => {
+      clearDialog();
+      jugador.empresa.gastoOperacional = Math.floor(jugador.empresa.gastoOperacional * 0.94);
+      actualizarEmpresaDashboard();
+      showOutput('<strong>Talento Humano Joven:</strong> Disminuye en un 6% tus Gastos Operacionales.');
+      esperandoDecision = false;
+    };
+    document.getElementById('no-12').onclick = () => {
+      clearDialog();
+      showOutput('<em>Rechazas la oportunidad.</em>');
+      esperandoDecision = false;
+    };
+  },
   // ...existing code...
 ];
-
 
 
 
