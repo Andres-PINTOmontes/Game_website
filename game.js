@@ -137,6 +137,9 @@ function initJuego(){
   if(!nombre){showOutput('❗ Ingresa nombre.');return;}
   jugador=new Jugador(nombre);gameOver=false;esperandoDecision=false;clearDialog();
   document.getElementById('juego').style.display='block';
+  // Ocultar bienvenida y menú
+  document.querySelector('.welcome-msg').style.display = 'none';
+  document.getElementById('menu').style.display = 'none';
   showOutput(`🎮 Bienvenido ${nombre}!<br>`+jugador.mostrarEstado().replace(/\n/g,'<br>'));
   actualizarTablero();actualizarEmpresaDashboard();
 }
@@ -1120,6 +1123,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   // document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
   // document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
 });
+
 
 
 
