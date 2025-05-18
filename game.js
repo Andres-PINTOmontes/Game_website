@@ -224,28 +224,43 @@ const efectosOpp = [
       esperandoDecision = false;
     };
   },
-  // 1: Casilla 4 - Tercerización en la Distribución
+  // 1: Casilla 4 - Tercerización en la distribución
   () => {
     clearDialog();
     const html = `
       <div class="alert alert-primary">
-        <strong>Tercerización en la Distribución</strong><br>Reduce gastos operacionales en un 2%.
+        <strong>CASILLA 4: Tercerización en la distribución</strong><br>
+        <em>Una trasportadora te ofrece el servicio de distribución de tu producto a un precio más bajo.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Debes invertir:</b> $15,000</li>
+          <li><b>Efecto:</b> Disminuye los gastos operacionales en un 5%</li>
+        </ul>
         <div class="mt-3">
-          <button id="ok-1" class="btn btn-success me-2">Tomar</button>
-          <button id="no-1" class="btn btn-secondary">Pasar</button>
+          <button id="ok-1" class="btn btn-success me-2">Aceptar</button>
+          <button id="no-1" class="btn btn-secondary">Rechazar</button>
         </div>
       </div>`;
     document.getElementById('dialog-container').innerHTML = html;
     esperandoDecision = true;
     document.getElementById('ok-1').onclick = () => {
       clearDialog();
-      jugador.empresa.gastoOperacional = Math.floor(jugador.empresa.gastoOperacional * 0.98);
-      actualizarEmpresaDashboard();
-      showOutput('<strong>Tercerización:</strong> Gastos operacionales -2%.');
+      if (jugador.empresa.balance >= 15000) {
+        jugador.empresa.pagarGastos(15000);
+        jugador.empresa.gastoOperacional = Math.floor(jugador.empresa.gastoOperacional * 0.95);
+        actualizarEmpresaDashboard();
+        showOutput('<strong>Tercerización:</strong> Gastos operacionales disminuidos en un 5%.');
+      } else {
+        showOutput('<strong>Tercerización:</strong> Fondos insuficientes.');
+      }
       esperandoDecision = false;
     };
-    document.getElementById('no-1').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
+    document.getElementById('no-1').onclick = () => {
+      clearDialog();
+      showOutput('<em>Rechazas la oportunidad.</em>');
+      esperandoDecision = false;
+    };
   },
+
   // 2: Casilla 7 - Publicidad en Redes Sociales
   () => {
     clearDialog();
@@ -276,51 +291,86 @@ const efectosOpp = [
     clearDialog();
     const html = `
       <div class="alert alert-primary">
-        <strong>Campaña de Marketing</strong><br>Invierte $7,000 y lanza dos dados (elige mayor).
+        <strong>CASILLA 10: Campaña de Marketing</strong><br>
+        <em>Una de las mejores agencias de marketing te propone una campaña prometedora que aumentaría tu demanda.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Debes invertir:</b> $7,000</li>
+          <li><b>Efecto:</b> Puedes lanzar dos veces y avanzar la suma de los dados</li>
+        </ul>
         <div class="mt-3">
-          <button id="ok-3" class="btn btn-success me-2">Tomar</button>
-          <button id="no-3" class="btn btn-secondary">Pasar</button>
+          <button id="ok-3" class="btn btn-success me-2">Aceptar</button>
+          <button id="no-3" class="btn btn-secondary">Rechazar</button>
         </div>
       </div>`;
     document.getElementById('dialog-container').innerHTML = html;
     esperandoDecision = true;
     document.getElementById('ok-3').onclick = () => {
       if (jugador.empresa.balance < 7000) {
-        clearDialog(); showOutput('<strong>Campaña:</strong> Fondos insuficientes.'); esperandoDecision = false; return;
+        clearDialog();
+        showOutput('<strong>Campaña:</strong> Fondos insuficientes.');
+        esperandoDecision = false;
+        return;
       }
       jugador.empresa.pagarGastos(7000);
       clearDialog();
       const dlg2 = `
         <div class="alert alert-info">
           Ingresa resultados de dos dados:<br>
-          <input id="m1" type="number" min="1" max="6" placeholder="Dado1"><br>
-          <input id="m2" type="number" min="1" max="6" placeholder="Dado2"><br>
+          <input id="m1" type="number" min="1" max="6" placeholder="Dado 1"><br>
+          <input id="m2" type="number" min="1" max="6" placeholder="Dado 2"><br>
           <button id="conf-3" class="btn btn-primary mt-2">Confirmar</button>
         </div>`;
       document.getElementById('dialog-container').innerHTML = dlg2;
       document.getElementById('conf-3').onclick = () => {
         const d1 = parseInt(document.getElementById('m1').value);
         const d2 = parseInt(document.getElementById('m2').value);
-        if ([d1,d2].some(x=>isNaN(x)||x<1||x>6)) return alert('Dados 1-6');
-        const mv = Math.max(d1,d2);
-        jugador.posicion += mv;
+        if ([d1, d2].some(x => isNaN(x) || x < 1 || x > 6)) return alert('Dados 1-6');
+        const suma = d1 + d2;
+        jugador.posicion += suma;
         clearDialog();
-        showOutput(`<strong>Campaña exitosa:</strong> Avanzas ${mv} casillas.`);
-        actualizarTablero(); actualizarEmpresaDashboard();
+        showOutput(`<strong>Campaña de Marketing:</strong> Avanzas ${suma} casillas (suma de los dados).`);
+        actualizarTablero();
+        actualizarEmpresaDashboard();
         esperandoDecision = false;
       };
     };
-    document.getElementById('no-3').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
+    document.getElementById('no-3').onclick = () => {
+      clearDialog();
+      showOutput('<em>Rechazas la oportunidad.</em>');
+      esperandoDecision = false;
+    };
   },
-  // 4: Casilla 13
+  // 4: Casilla 13 - Concurso de emprendimiento
   () => {
     clearDialog();
-    const html = `<div class="alert alert-primary"><strong>Concurso Empresarial</strong><br> -15% Costo producción.<div class="mt-3"><button id="ok-4" class="btn btn-success me-2">Tomar</button><button id="no-4" class="btn btn-secondary">Pasar</button></div></div>`;
+    const html = `
+      <div class="alert alert-primary">
+        <strong>CASILLA 13: Concurso de emprendimiento</strong><br>
+        <em>Al inscribirte en la competencia, el premio al proyecto ganador es una inversión en maquinaria para optimizar procesos.</em>
+        <ul class="mt-2 mb-2">
+          <li><b>Debes perder un turno</b> para la postulación en la competencia</li>
+          <li><b>Efecto:</b> Disminuyes en un 15% tu costo de producción</li>
+        </ul>
+        <div class="mt-3">
+          <button id="ok-4" class="btn btn-success me-2">Aceptar</button>
+          <button id="no-4" class="btn btn-secondary">Rechazar</button>
+        </div>
+      </div>`;
     document.getElementById('dialog-container').innerHTML = html;
     esperandoDecision = true;
-    document.getElementById('ok-4').onclick = () => { clearDialog(); jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 0.85); actualizarEmpresaDashboard(); showOutput('<strong>Concurso:</strong> -15% costo producción.'); esperandoDecision = false; };
-    document.getElementById('no-4').onclick = () => { clearDialog(); showOutput('<em>Pasas oportunidad.</em>'); esperandoDecision = false; };
-
+    document.getElementById('ok-4').onclick = () => {
+      clearDialog();
+      jugador.turnosPerdidos++;
+      jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 0.85);
+      actualizarEmpresaDashboard();
+      showOutput('<strong>Concurso de emprendimiento:</strong> Pierdes un turno y disminuyes en un 15% tu costo de producción.');
+      esperandoDecision = false;
+    };
+    document.getElementById('no-4').onclick = () => {
+      clearDialog();
+      showOutput('<em>Rechazas la oportunidad.</em>');
+      esperandoDecision = false;
+    };
   },
     // 5: Casilla 17 - Investigación y Desarrollo
   () => {
@@ -918,18 +968,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   // document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
   // document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
 });
-function procesarCasillaOportunidad(cas){esperandoDecision=false;clearDialog();efectosOpp[cas.indiceEfecto]();actualizarEmpresaDashboard();}
-function procesarCasillaAmenaza(cas){esperandoDecision=false;clearDialog();efectosAmen[cas.indiceEfecto]();actualizarEmpresaDashboard();}
 
-// --- DOM Ready ---
-document.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('btn-iniciar').addEventListener('click',initJuego);
-  document.getElementById('btn-turno').addEventListener('click',turno);
-
-  // Si tienes los botones de dado aleatorio y limpiar log, descomenta estas líneas:
-  // document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
-  // document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
-});
 
 
 
