@@ -116,6 +116,46 @@ header p {
   background: #e76b3c;
 }
 
+#menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+#menu input,
+#menu button {
+  width: 100%;
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+#controls .d-flex {
+  gap: 1rem;
+}
+
+#controls input,
+#controls button {
+  min-width: 120px;
+  margin-bottom: 0;
+}
+
+#controls button {
+  min-width: 160px;
+}
+
+@media (max-width: 900px) {
+  #controls .d-flex {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  #controls input,
+  #controls button {
+    min-width: 100px;
+    width: 100%;
+  }
+}
+
 /* Dialog and Output */
 #dialog-container,
 #output {
