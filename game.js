@@ -108,16 +108,16 @@ function actualizarTablero(){
         d.classList.add('opp-late');
       }
     }
-    // Amenazas
+    // Amenazas por lado del tablero
     if(cell.tipo==='amenaza' && cell.indiceEfecto!==null){
-      if(i<=16){
-        d.classList.add('threat-early');
-      } else if(i>16 && i<=32){
-        d.classList.add('threat-mid1');
-      } else if(i>32 && i<=48){
-        d.classList.add('threat-mid2');
-      } else if(i>48 && i<=63){
-        d.classList.add('threat-late');
+      if(i>=0 && i<=15){
+        d.classList.add('threat-early');    // #007A33
+      } else if(i>=16 && i<=31){
+        d.classList.add('threat-mid1');     // #FFEF16
+      } else if(i>=32 && i<=47){
+        d.classList.add('threat-mid2');     // #FF6A13
+      } else if(i>=48 && i<=63){
+        d.classList.add('threat-late');     // #F40014
       }
     }
     d.innerHTML=`<div>${i}</div><div>${cell.icon}</div>`;
