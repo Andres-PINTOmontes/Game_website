@@ -8,7 +8,201 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- FontAwesome para iconos -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel=…ener('DOMContentLoaded', () => {
+  <link rel="stylesheet" href="styles.css">
+  <!-- Fuente atractiva para el título -->
+  <link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+  <style>
+    /* Elimina o comenta la siguiente línea para evitar sobrescribir el fondo del CSS */
+    /* body { background: #f8f9fa; } */
+    body {
+      background: url('assets/img/fondo.jpg') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .main-panel {
+      background: rgba(255,255,255,0.85);
+      border-radius: 32px;
+      box-shadow: 0 8px 32px rgba(44,62,80,0.18);
+      padding: 2.5rem 2rem 2rem 2rem;
+      max-width: 900px;
+      margin: 2rem auto;
+      position: relative;
+      z-index: 2;
+    }
+    .titulo-ceo {
+      font-family: 'Bungee Shade', cursive, sans-serif;
+      font-size: 4.5rem;
+      letter-spacing: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 1.5rem;
+      color: #222;
+      text-shadow: 2px 4px 12px rgba(0,0,0,0.12);
+    }
+    .titulo-ceo img {
+      height: 100px;
+      width: auto;
+      border-radius: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      margin-right: 18px;
+      margin-left: 0;
+    }
+    .welcome-msg {
+      font-size: 1.35rem;
+      color: #444;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      background: rgba(255,255,255,0.7);
+      border-radius: 18px;
+      padding: 0.75rem 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    #menu {
+      background: rgba(255,255,255,0.7);
+      border-radius: 18px;
+      padding: 1.2rem 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    #menu input {
+      font-size: 1.2rem;
+      padding: 0.7rem 1rem;
+      width: 100%;
+      max-width: 350px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    #menu button {
+      font-size: 1.2rem;
+      padding: 0.7rem 2.2rem;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #ff7f50 0%, #ffb347 100%);
+      color: #fff;
+      border: none;
+      box-shadow: 0 2px 8px rgba(255,127,80,0.12);
+      transition: background 0.2s;
+    }
+    #menu button:hover {
+      background: linear-gradient(90deg, #ffb347 0%, #ff7f50 100%);
+      color: #fff;
+    }
+    #controls {
+      background: rgba(255,255,255,0.8);
+      border-radius: 18px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+    }
+    #controls input, #controls button {
+      font-size: 1.1rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 10px !important;
+    }
+    #controls button {
+      background: linear-gradient(90deg, #2e3a59 0%, #ff7f50 100%);
+      color: #fff;
+      border: none;
+      box-shadow: 0 2px 8px rgba(46,58,89,0.10);
+      transition: background 0.2s;
+    }
+    #controls button:hover {
+      background: linear-gradient(90deg, #ff7f50 0%, #2e3a59 100%);
+    }
+    .board-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+    .board-space {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 8px;
+      position: relative;
+      text-align: center;
+      border-radius: 4px;
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .board-space.active { border-color: #198754; box-shadow: 0 0 8px rgba(25,135,84,0.5); }
+    .board-space:hover {
+      transform: scale(1.07);
+      background: #ffe5d0;
+      border-color: #ffb347;
+    }
+    .player-token { width: 12px; height: 12px; background: #198754; border-radius: 50%; position: absolute; top: 4px; right: 4px; }
+    #company-metrics .metric-item { display: flex; justify-content: space-between; margin-bottom: 6px; }
+    #output { background: #fff; border: 1px solid #ddd; padding: 12px; height: 350px; overflow-y: auto; border-radius: 4px; }
+    @media (max-width: 900px) {
+      .main-panel { padding: 1.2rem 0.5rem; }
+      .titulo-ceo { font-size: 2.5rem; }
+      .titulo-ceo img { height: 60px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-panel container py-4">
+    <div class="titulo-ceo">
+      <img src="assets/img/logo.jpg" alt="Logo">
+      <span>The CEO</span>
+    </div>
+    <div class="welcome-msg">
+      ¡Bienvenido a <b>The CEO</b>! Vive la experiencia de liderar tu propia empresa, toma decisiones y conviértete en el mejor emprendedor.<br>
+      Ingresa tu nombre y haz clic en <b>Iniciar Juego</b> para comenzar.
+    </div>
+    <!-- Menú Inicial -->
+    <div id="menu">
+      <input id="nombre" class="form-control" placeholder="Nombre del jugador">
+      <button id="btn-iniciar" class="btn btn-primary"><i class="fas fa-play"></i> Iniciar Juego</button>
+    </div>
+    <!-- Sección de Juego -->
+    <div id="juego" style="display:none;">
+      <!-- Controles de Turno -->
+      <div id="controls" class="mb-3">
+        <div class="d-flex flex-wrap justify-content-center align-items-center gap-3">
+          <input type="number" id="dado" class="form-control w-auto" min="1" max="6" placeholder="Dado">
+          <!-- <button id="btn-random-dice" class="btn btn-secondary"><i class="fas fa-dice"></i> Aleatorio</button> -->
+          <button id="btn-turno" class="btn btn-success"><i class="fas fa-forward"></i> Siguiente Turno</button>
+          <!-- <button id="btn-clear-log" class="btn btn-warning"><i class="fas fa-broom"></i> Limpiar Log</button> -->
+        </div>
+      </div>
+      <div class="row">
+        <!-- Contenedor de Diálogos Inline -->
+        <div class="col-12 mb-3">
+          <div id="dialog-container"></div>
+        </div>
+        <!-- Tablero -->
+        <div class="col-lg-8 mb-3">
+          <div id="board-container" class="border rounded p-2 bg-white"></div>
+        </div>
+        <!-- Panel Empresa + Log -->
+        <div class="col-lg-4">
+          <div class="d-flex flex-row gap-3 align-items-start">
+            <div id="company-metrics" class="border rounded p-3 bg-white mb-3 flex-fill" style="min-width:180px;"></div>
+            <div id="output" class="border rounded p-3 bg-white mb-3 flex-fill" style="min-width:220px; max-width:320px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Elimina o comenta la siguiente línea -->
+    <!-- <img src="assets/fondo.jpg" alt="Fondo"> -->
+  </div>
+
+  <!-- Cargar lógica de juego desde archivo separado -->
+  <script src="game.js"></script>
+  <!-- Habilitar 'Enter' en el campo dado para avanzar turno -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
       const dadoInput = document.getElementById('dado');
       const btnTurno = document.getElementById('btn-turno');
       if (dadoInput && btnTurno) {
