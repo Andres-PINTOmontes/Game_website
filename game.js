@@ -1056,15 +1056,15 @@ const efectosAmen = [
       esperandoDecision = false;
     };
   },
-  // Casilla 19: Normativas y Regulaciones. Lanza un dado; +5% costo producción por cada punto.
+  // Casilla 19: Cambio en normativas legales. Lanza el dado; tu costo de producción aumenta un 5% por cada punto
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-danger">
-        <strong>CASILLA 19: Normativas y Regulaciones</strong><br>
-        <em>Nuevas normativas aumentan tus costos de producción.</em>
+        <strong>CASILLA 19: CAMBIO EN NORMATIVAS LEGALES</strong><br>
+        <em>El gobierno aprueba una nueva regulación que afecta tu sector. Debes adaptar urgentemente tu producto a los nuevos requisitos del gobierno.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Lanza un dado; +5% costo producción por cada punto.</li>
+          <li><b>Efecto:</b> Lanza el dado; tu costo de producción aumenta un 5% por cada punto.</li>
         </ul>
         <div class="mt-3">
           <input type="number" id="dreg" class="form-control mb-2" min="1" max="6" placeholder="Dado">
@@ -1078,19 +1078,19 @@ const efectosAmen = [
       jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * (1 + 0.05 * v));
       clearDialog();
       actualizarEmpresaDashboard();
-      showOutput(`<strong>Normativas y Regulaciones</strong><br>Costo de producción +${5 * v}%`);
+      showOutput(`<strong>CAMBIO EN NORMATIVAS LEGALES</strong><br>Costo de producción +${5 * v}%`);
       esperandoDecision = false;
     };
   },
-  // Casilla 22: Sanción por Incumplimiento. Retrocedes 2 casillas y pierdes 2 turnos.
+  // Casilla 22: SANCIÓN POR INCUMPLIMIENTO. RETROCEDES 2 CASILLAS Y PIERDES 3 TURNOS
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-danger">
-        <strong>CASILLA 22: Sanción por Incumplimiento</strong><br>
-        <em>Una sanción por incumplimiento afecta tu avance y operaciones.</em>
+        <strong>CASILLA 22: SANCIÓN POR INCUMPLIMIENTO</strong><br>
+        <em>Una entidad reguladora te multa por no cumplir un requerimiento legal.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Retrocedes 2 casillas y pierdes 2 turnos.</li>
+          <li><b>Efecto:</b> RETROCEDES 2 CASILLAS Y PIERDES 3 TURNOS</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-6" class="btn btn-danger">Aceptar efecto</button>
@@ -1099,23 +1099,23 @@ const efectosAmen = [
     esperandoDecision = true;
     document.getElementById('ok-amen-6').onclick = () => {
       jugador.casilla = Math.max(0, jugador.casilla - 2);
-      jugador.turnosPerdidos += 2;
+      jugador.turnosPerdidos += 3;
       actualizarTablero();
       actualizarEmpresaDashboard();
       clearDialog();
-      showOutput(`<strong>Sanción por Incumplimiento</strong><br>Retrocedes 2 casillas y pierdes 2 turnos.`);
+      showOutput(`<strong>SANCIÓN POR INCUMPLIMIENTO</strong><br>Retrocedes 2 casillas y pierdes 3 turnos.`);
       esperandoDecision = false;
     };
   },
-  // Casilla 25: Competencia Desleal. Pierdes 5% de margen de ganancia.
+  // Casilla 25: COMPETENCIA DESLEAL. PIERDES 10% DE MARGEN DE GANANCIAS Y TUS INGRESOS DISMINUYEN EN UN 10%
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
       <div class="alert alert-danger">
-        <strong>CASILLA 25: Competencia Desleal</strong><br>
-        <em>Un competidor desleal afecta tus márgenes de ganancia.</em>
+        <strong>CASILLA 25: COMPETENCIA DESLEAL</strong><br>
+        <em>Una empresa rival baja precios drásticamente o copia tu producto.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Pierdes 5% de margen de ganancia.</li>
+          <li><b>Efecto:</b> PIERDES 10% DE MARGEN DE GANANCIAS Y TUS INGRESOS DISMINUYEN EN UN 10%</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-7" class="btn btn-danger">Aceptar efecto</button>
@@ -1123,10 +1123,12 @@ const efectosAmen = [
       </div>`;
     esperandoDecision = true;
     document.getElementById('ok-amen-7').onclick = () => {
-      jugador.empresa.margenGanancia *= 0.95;
+      jugador.empresa.margenGanancia *= 0.90;
+      const ded = Math.floor(jugador.empresa.ingresoNeto * 0.10);
+      jugador.empresa.ingresoNeto -= ded;
       actualizarEmpresaDashboard();
       clearDialog();
-      showOutput(`<strong>Competencia Desleal</strong><br>Margen de ganancia -5%.`);
+      showOutput(`<strong>COMPETENCIA DESLEAL</strong><br>Pierdes 10% de margen de ganancias y tus ingresos disminuyen en un 10% (-$${ded}).`);
       esperandoDecision = false;
     };
   },
@@ -1458,7 +1460,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   // document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
   // document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
 });
-
 
 
 
