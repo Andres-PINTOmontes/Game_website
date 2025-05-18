@@ -5,11 +5,11 @@ let ronda = 0;
 // --- Clases y Estado del Juego ---
 class Empresa {
   constructor() {
-    this.margenGanancias = 0.30;
+    this.margenGanancia = 0.30; // antes margenGanancias
     this.costoProduccion = 5000;
-    this.gastoOperacional = 2000;
-    this.ingresosNetos = 100000;
-    this.balance = 100000;
+    this.gastosOperacionales = 2000; // antes gastoOperacional
+    this.ingresoNeto = 100000; // antes ingresosNetos
+    // this.balance = 100000; // eliminado
     this.bonificacionVentas = 1.0;
     this.rondasBonificacion = 0;
     this.limiteBonificaciones = 0;
@@ -20,8 +20,8 @@ class Empresa {
   actualizarIngresos(cantidad, tramoIVA = 0) {
     let ingreso = tramoIVA > 0 ? cantidad * (1 - tramoIVA/100) : cantidad;
     if (this.rondasBonificacion > 0 && this.limiteBonificaciones <= 0) ingreso *= this.bonificacionVentas;
-    this.ingresosNetos += ingreso;
-    this.balance += ingreso;
+    this.ingresoNeto += ingreso;
+    // this.balance += ingreso; // eliminado
     if (this.rondasBonificacion > 0) {
       this.rondasBonificacion--;
       if (this.rondasBonificacion === 0) this.bonificacionVentas = 1.0;
@@ -30,17 +30,18 @@ class Empresa {
     return ingreso;
   }
   pagarGastos(cantidad) {
-    this.balance -= cantidad;
-    return this.balance >= 0;
+    // this.balance -= cantidad; // eliminado
+    this.ingresoNeto -= cantidad;
+    return this.ingresoNeto >= 0;
   }
   estado() {
-    let texto = `🌟 Margen: ${(this.margenGanancias*100).toFixed(2)}%\n` +
-                `💼 Costo Prod: $${this.costoProduccion}\n` +
-                `🛠️ Gasto Op: $${this.gastoOperacional}\n` +
-                `💵 Ingresos: $${this.ingresosNetos}\n` +
-                `💰 Balance: $${this.balance}\n`;
-    if (this.rondasBonificacion>0) texto += `🚀 +${((this.bonificacionVentas-1)*100).toFixed(0)}% ventas x${this.rondasBonificacion} rondas\n`;
-    if (this.limiteBonificaciones>0) texto += `⚠️ Bonifs limitadas: ${this.limiteBonificaciones} rondas\n`;
+    let texto =
+      `Margen de ganancia: ${(this.margenGanancia*100).toFixed(2)}%\n` +
+      `Costo de producción: $${this.costoProduccion}\n` +
+      `Gastos operacionales: $${this.gastosOperacionales}\n` +
+      `Ingreso neto: $${this.ingresoNeto}\n`;
+    if (this.rondasBonificacion>0) texto += `Bonificación ventas: +${((this.bonificacionVentas-1)*100).toFixed(0)}% x${this.rondasBonificacion} rondas\n`;
+    if (this.limiteBonificaciones>0) texto += `Bonificaciones limitadas: ${this.limiteBonificaciones} rondas\n`;
     return texto;
   }
 }
@@ -49,16 +50,16 @@ class Jugador {
   constructor(nombre) {
     this.nombre = nombre;
     this.empresa = new Empresa();
-    this.posicion = 0;
-    this.lastRoll = 0;
+    this.casilla = 0; // antes posicion
+    this.ultimoDado = 0; // antes lastRoll
     this.turnosPerdidos = 0;
     this.segurosRestantes = 0;
     this.ultimoIngreso = 0;
   }
   mostrarEstado() {
-    let estado = `📍 Casilla ${this.posicion} (IVA: ${getTramoIVA(this.posicion)}%)\n` + this.empresa.estado();
-    if (this.turnosPerdidos>0) estado += `⏱️ Turnos perdidos: ${this.turnosPerdidos}\n`;
-    if (this.segurosRestantes>0) estado += `🛡️ Seguros: ${this.segurosRestantes}\n`;
+    let estado = `Casilla ${this.casilla} (IVA: ${getTramoIVA(this.casilla)}%)\n` + this.empresa.estado();
+    if (this.turnosPerdidos>0) estado += `Turnos perdidos: ${this.turnosPerdidos}\n`;
+    if (this.segurosRestantes>0) estado += `Seguros: ${this.segurosRestantes}\n`;
     return estado;
   }
 }
@@ -89,11 +90,11 @@ function showOutput(html){document.getElementById('output').innerHTML=html;}
 // --- Render Tablero y Dashboard ---
 function actualizarTablero(){
   const bc=document.getElementById('board-container'); bc.innerHTML='';
-  const start=Math.max(0,jugador?jugador.posicion-8:0),end=Math.min(63,start+15);
+  const start=Math.max(0,jugador?jugador.casilla-8:0),end=Math.min(63,start+15);
   const grid=document.createElement('div'); grid.className='board-grid';
   for(let i=start;i<=end;i++){ let cell=tablero[i];
     const d=document.createElement('div'); d.className='board-space';
-    if(jugador&&jugador.posicion===i)d.classList.add('active');
+    if(jugador&&jugador.casilla===i)d.classList.add('active');
     d.innerHTML=`<div>${i}</div><div>${cell.icon}</div>`;
     grid.appendChild(d);
   }
@@ -135,7 +136,7 @@ function turno() {
   // 2) Turnos perdidos
   if (jugador.turnosPerdidos > 0) {
     jugador.turnosPerdidos--;
-    showOutput(`⏱️ Pierdes ${jugador.turnosPerdidos} turno(s).`);
+    showOutput(`Turnos perdidos: ${jugador.turnosPerdidos}`);
     return;
   }
 
@@ -147,7 +148,7 @@ function turno() {
   }
 
   // --- Validación de frontera: solo puedes ganar con el número exacto ---
-  const prev = jugador.posicion;
+  const prev = jugador.casilla;
   let np = prev + v;
   if (np > 64) {
     showOutput('Debes sacar el número exacto para llegar a la meta.');
@@ -156,34 +157,25 @@ function turno() {
   if (np === 64) {
     gameOver = true;
   }
-
-  // 4) Avanzar y calcular ingreso
   clearDialog();
-  // const prev = jugador.posicion; // ya definido arriba
-  // let np = prev + v; // ya definido arriba
-  // if (np >= 64) { ... } // ya manejado arriba
-
   const ingres = jugador.empresa.calcularIngresoBase(np - prev);
   const neto  = jugador.empresa.actualizarIngresos(ingres, getTramoIVA(np));
   jugador.ultimoIngreso = neto;
-  jugador.posicion      = np;
-  jugador.lastRoll      = v;
+  jugador.casilla      = np;
+  jugador.ultimoDado   = v;
 
   showOutput(`🎲 ${jugador.nombre} avanza a ${np}, gana $${neto.toFixed(0)}`);
-
   // 5) Actualizar UI
   actualizarTablero();
   actualizarEmpresaDashboard();
-
   // 6) Victoria
   if (np === 64) {
     showOutput('🏆 ¡Victoria!');
     return;
   }
-
   // 7) Procesar efecto de casilla
   setTimeout(() => {
-    const cell = tablero[jugador.posicion];
+    const cell = tablero[jugador.casilla];
     if      (cell.tipo === 'oportunidad') procesarCasillaOportunidad(cell);
     else if (cell.tipo === 'amenaza')      procesarCasillaAmenaza(cell);
     else                                   showOutput(jugador.mostrarEstado().replace(/\n/g,'<br>'));
@@ -222,7 +214,7 @@ const efectosOpp = [
     esperandoDecision = true;
     document.getElementById('ok-0').onclick = () => {
       clearDialog();
-      jugador.posicion++;
+      jugador.casilla++;
       actualizarTablero();
       showOutput(
         `<strong>Tendencia Viral en Redes Sociales:</strong><br>
@@ -252,9 +244,9 @@ const efectosOpp = [
     esperandoDecision = true;
     document.getElementById('ok-1').onclick = () => {
       clearDialog();
-      if (jugador.empresa.balance >= 15000) {
+      if (jugador.empresa.ingresoNeto >= 15000) {
         jugador.empresa.pagarGastos(15000);
-        jugador.empresa.gastoOperacional = Math.floor(jugador.empresa.gastoOperacional * 0.95);
+        jugador.empresa.gastosOperacionales = Math.floor(jugador.empresa.gastosOperacionales * 0.95);
         actualizarEmpresaDashboard();
         showOutput('<strong>Tercerización:</strong> Gastos operacionales disminuidos en un 5%.');
       } else {
@@ -289,7 +281,7 @@ const efectosOpp = [
     esperandoDecision = true;
     document.getElementById('ok-2').onclick = () => {
       clearDialog();
-      if (jugador.empresa.balance >= 8000) {
+      if (jugador.empresa.ingresoNeto >= 8000) {
         jugador.empresa.pagarGastos(8000);
         jugador.empresa.actualizarIngresos(12000);
         document.getElementById('dialog-container').innerHTML = `
@@ -343,7 +335,7 @@ const efectosOpp = [
     document.getElementById('dialog-container').innerHTML = html;
     esperandoDecision = true;
     document.getElementById('ok-3').onclick = () => {
-      if (jugador.empresa.balance < 7000) {
+      if (jugador.empresa.ingresoNeto < 7000) {
         clearDialog();
         showOutput('<strong>Campaña:</strong> Fondos insuficientes.');
         esperandoDecision = false;
@@ -364,7 +356,7 @@ const efectosOpp = [
         const d2 = parseInt(document.getElementById('m2').value);
         if ([d1, d2].some(x => isNaN(x) || x < 1 || x > 6)) return alert('Dados 1-6');
         const suma = d1 + d2;
-        jugador.posicion += suma;
+        jugador.casilla += suma;
         clearDialog();
         showOutput(`<strong>Campaña de Marketing:</strong> Avanzas ${suma} casillas (suma de los dados).`);
         actualizarTablero();
@@ -430,7 +422,7 @@ const efectosOpp = [
     esperandoDecision = true;
     document.getElementById('ok-5').onclick = () => {
       clearDialog();
-      if (jugador.empresa.balance >= 19000) {
+      if (jugador.empresa.ingresoNeto >= 19000) {
         jugador.empresa.pagarGastos(19000);
         // Pedir al usuario que ingrese el resultado del dado
         document.getElementById('dialog-container').innerHTML = `
@@ -489,7 +481,7 @@ const efectosOpp = [
     esperandoDecision = true;
     document.getElementById('ok-6').onclick = () => {
       clearDialog();
-      if (jugador.empresa.balance >= 22000) {
+      if (jugador.empresa.ingresoNeto >= 22000) {
         jugador.empresa.pagarGastos(22000);
         jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 0.85);
         actualizarEmpresaDashboard();
@@ -528,7 +520,7 @@ const efectosOpp = [
       clearDialog();
       jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 0.95);
       // Aumenta ingresos netos en 10%
-      const aumento = Math.floor(jugador.empresa.ingresosNetos * 0.10);
+      const aumento = Math.floor(jugador.empresa.ingresoNeto * 0.10);
       jugador.empresa.actualizarIngresos(aumento);
       actualizarEmpresaDashboard();
       showOutput('<strong>Nuevo proveedor:</strong> Disminuyes tu costo de producción en un 5% y aumentan tus ingresos en un 10%.');
@@ -560,7 +552,7 @@ const efectosOpp = [
     esperandoDecision = true;
     document.getElementById('ok-8').onclick = () => {
       clearDialog();
-      if (jugador.empresa.balance >= 10000) {
+      if (jugador.empresa.ingresoNeto >= 10000) {
         jugador.empresa.pagarGastos(10000);
         jugador.empresa.actualizarIngresos(18000);
         document.getElementById('dialog-container').innerHTML = `
@@ -616,7 +608,7 @@ const efectosOpp = [
     esperandoDecision = true;
     document.getElementById('ok-9').onclick = () => {
       clearDialog();
-      if (jugador.empresa.balance >= 6000) {
+      if (jugador.empresa.ingresoNeto >= 6000) {
         jugador.empresa.pagarGastos(6000);
         jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 0.90);
         actualizarEmpresaDashboard();
@@ -653,9 +645,9 @@ const efectosOpp = [
     esperandoDecision = true;
     document.getElementById('ok-10').onclick = () => {
       clearDialog();
-      if (jugador.empresa.balance >= 45000) {
+      if (jugador.empresa.ingresoNeto >= 45000) {
         jugador.empresa.pagarGastos(45000);
-        const inc = Math.floor(jugador.empresa.ingresosNetos * 0.10);
+        const inc = Math.floor(jugador.empresa.ingresoNeto * 0.10);
         jugador.empresa.actualizarIngresos(inc);
         actualizarEmpresaDashboard();
         showOutput('<strong>Inversión en Sustentabilidad:</strong> Tus ingresos aumentan en un 10%.');
@@ -691,9 +683,9 @@ const efectosOpp = [
     esperandoDecision = true;
     document.getElementById('ok-11').onclick = () => {
       clearDialog();
-      if (jugador.empresa.balance >= 52000) {
+      if (jugador.empresa.ingresoNeto >= 52000) {
         jugador.empresa.pagarGastos(52000);
-        jugador.empresa.gastoOperacional = Math.floor(jugador.empresa.gastoOperacional * 0.50);
+        jugador.empresa.gastosOperacionales = Math.floor(jugador.empresa.gastosOperacionales * 0.50);
         actualizarEmpresaDashboard();
         showOutput('<strong>Compra del local:</strong> Disminución del 50% en los gastos operacionales.');
       } else {
@@ -728,7 +720,7 @@ const efectosOpp = [
     esperandoDecision = true;
     document.getElementById('ok-12').onclick = () => {
       clearDialog();
-      jugador.empresa.gastoOperacional = Math.floor(jugador.empresa.gastoOperacional * 0.94);
+      jugador.empresa.gastosOperacionales = Math.floor(jugador.empresa.gastosOperacionales * 0.94);
       actualizarEmpresaDashboard();
       showOutput('<strong>Talento Humano Joven:</strong> Disminuye en un 6% tus Gastos Operacionales.');
       esperandoDecision = false;
@@ -771,7 +763,7 @@ const efectosOpp = [
           jugador.empresa.pagarGastos(10000);
           showOutput('<strong>Inversores:</strong> Los inversores se retiran y pierdes $10,000.');
         } else {
-          jugador.empresa.balance += 30000;
+          jugador.empresa.ingresoNeto += 30000;
           showOutput('<strong>Aumento de Capital:</strong> Tu balance aumenta en $30,000.');
         }
         actualizarEmpresaDashboard();
@@ -800,7 +792,7 @@ const efectosOpp = [
     document.getElementById('ok-14').onclick = () => {
       clearDialog();
       jugador.empresa.actualizarIngresos(20000);
-      jugador.empresa.gastoOperacional = Math.floor(jugador.empresa.gastoOperacional * 0.90);
+      jugador.empresa.gastosOperacionales = Math.floor(jugador.empresa.gastosOperacionales * 0.90);
       jugador.empresa.rondasBonificacion += 3;
       actualizarEmpresaDashboard();
       showOutput('<strong>Subvención Gubernamental:</strong> Recibes $20,000 y tus gastos operacionales disminuyen en un 10% por 3 rondas.');
@@ -828,9 +820,9 @@ const efectosOpp = [
       clearDialog();
       // Calcula el IVA pagado en el último movimiento
       // El IVA se calcula sobre el ingreso base del último avance
-      const iva = getTramoIVA(jugador.posicion);
-      const prev = jugador.posicion - jugador.lastRoll;
-      const ingresoBase = jugador.empresa.calcularIngresoBase(jugador.posicion - prev);
+      const iva = getTramoIVA(jugador.casilla);
+      const prev = jugador.casilla - jugador.ultimoDado;
+      const ingresoBase = jugador.empresa.calcularIngresoBase(jugador.casilla - prev);
       const ivaPagado = ingresoBase * (iva / 100);
       const devolucion = Math.floor(ivaPagado * 0.10);
       jugador.empresa.actualizarIngresos(devolucion);
@@ -860,8 +852,8 @@ const efectosOpp = [
     esperandoDecision = true;
     document.getElementById('ok-16').onclick = () => {
       clearDialog();
-      const inversion = Math.floor(jugador.empresa.ingresosNetos * 0.60);
-      if (jugador.empresa.balance >= inversion) {
+      const inversion = Math.floor(jugador.empresa.ingresoNeto * 0.60);
+      if (jugador.empresa.ingresoNeto >= inversion) {
         jugador.empresa.pagarGastos(inversion);
         // Pedir al usuario que ingrese el resultado del dado
         document.getElementById('dialog-container').innerHTML = `
@@ -879,8 +871,8 @@ const efectosOpp = [
           clearDialog();
           if (valor === 1 || valor === 2) {
             // Pierde 20% de los ingresos netos actuales
-            const perdida = Math.floor(jugador.empresa.ingresosNetos * 0.20);
-            jugador.empresa.ingresosNetos -= perdida;
+            const perdida = Math.floor(jugador.empresa.ingresoNeto * 0.20);
+            jugador.empresa.ingresoNeto -= perdida;
             jugador.empresa.balance -= perdida;
             showOutput('<strong>¡Mala suerte!</strong> Pierdes el 20% de tus ingresos.');
           } else {
@@ -918,14 +910,14 @@ const efectosAmen = [
   },
   // Casilla 6: Retraso Logístico. Retrocedes 1 casilla.
   () => {
-    jugador.posicion = Math.max(0, jugador.posicion - 1);
+    jugador.casilla = Math.max(0, jugador.casilla - 1);
     actualizarTablero();
     actualizarEmpresaDashboard();
     showOutput(`<strong>Retraso Logístico</strong><br>Retrocedes 1 casilla.`);
   },
   // Casilla 9: Reparación de Maquinaria. Pierdes $10,000 y +5% costo producción.
   () => {
-    if (jugador.empresa.balance >= 10000) {
+    if (jugador.empresa.ingresoNeto >= 10000) {
       jugador.empresa.pagarGastos(10000);
       jugador.empresa.costoProduccion = Math.floor(jugador.empresa.costoProduccion * 1.05);
       actualizarEmpresaDashboard();
@@ -944,7 +936,7 @@ const efectosAmen = [
   },
   // Casilla 15: Paro de Producción. Retrocedes 1 casilla y bonificaciones limitadas por 4 rondas.
   () => {
-    jugador.posicion = Math.max(0, jugador.posicion - 1);
+    jugador.casilla = Math.max(0, jugador.casilla - 1);
     jugador.empresa.limiteBonificaciones = 4;
     actualizarTablero();
     actualizarEmpresaDashboard();
@@ -973,7 +965,7 @@ const efectosAmen = [
   },
   // Casilla 22: Sanción por Incumplimiento. Retrocedes 2 casillas y pierdes 2 turnos.
   () => {
-    jugador.posicion = Math.max(0, jugador.posicion - 2);
+    jugador.casilla = Math.max(0, jugador.casilla - 2);
     jugador.turnosPerdidos += 2;
     actualizarTablero();
     actualizarEmpresaDashboard();
@@ -981,7 +973,7 @@ const efectosAmen = [
   },
   // Casilla 25: Competencia Desleal. Pierdes 5% de margen de ganancia.
   () => {
-    jugador.empresa.margenGanancias *= 0.95;
+    jugador.empresa.margenGanancia *= 0.95;
     actualizarEmpresaDashboard();
     showOutput(`<strong>Competencia Desleal</strong><br>Margen de ganancia -5%.`);
   },
@@ -993,14 +985,14 @@ const efectosAmen = [
   },
   // Casilla 31: Problema de Calidad. Retrocedes 2 casillas.
   () => {
-    jugador.posicion = Math.max(0, jugador.posicion - 2);
+    jugador.casilla = Math.max(0, jugador.casilla - 2);
     actualizarTablero();
     actualizarEmpresaDashboard();
     showOutput(`<strong>Problema de Calidad</strong><br>Retrocedes 2 casillas.`);
   },
   // Casilla 35: Incendio en Planta. Retrocedes 3 casillas y pierdes 3 turnos.
   () => {
-    jugador.posicion = Math.max(0, jugador.posicion - 3);
+    jugador.casilla = Math.max(0, jugador.casilla - 3);
     jugador.turnosPerdidos += 3;
     actualizarTablero();
     actualizarEmpresaDashboard();
@@ -1008,7 +1000,7 @@ const efectosAmen = [
   },
   // Casilla 38: Fraude Interno. Pierdes USD 30,000 de ingresos netos.
   () => {
-    if (jugador.empresa.balance >= 30000) {
+    if (jugador.empresa.ingresoNeto >= 30000) {
       jugador.empresa.pagarGastos(30000);
       actualizarEmpresaDashboard();
       showOutput(`<strong>Fraude Interno</strong><br>Pierdes $30,000.`);
@@ -1031,7 +1023,7 @@ const efectosAmen = [
     document.getElementById('conf-av').onclick = () => {
       const v = parseInt(document.getElementById('dav').value);
       if (isNaN(v) || v < 1 || v > 6) return alert('Ingresa un valor entre 1 y 6.');
-      jugador.posicion = Math.max(0, jugador.posicion - v);
+      jugador.casilla = Math.max(0, jugador.casilla - v);
       const costo = v * 10000;
       if (!jugador.empresa.pagarGastos(costo)) { showOutput('No tienes para pagar reparaciones. ¡GAME OVER!'); gameOver = true; }
       else { actualizarEmpresaDashboard(); showOutput(`<strong>Avería de Maquinaria</strong><br>Retrocedes ${v} casillas y pagas $${costo}.`); }
@@ -1041,8 +1033,8 @@ const efectosAmen = [
   },
   // Casilla 44: Pérdida de Contrato. Pierdes 10% de tus ingresos netos.
   () => {
-    const ded = Math.floor(jugador.empresa.ingresosNetos * 0.10);
-    jugador.empresa.ingresosNetos -= ded;
+    const ded = Math.floor(jugador.empresa.ingresoNeto * 0.10);
+    jugador.empresa.ingresoNeto -= ded;
     jugador.empresa.balance -= ded;
     actualizarEmpresaDashboard();
     showOutput(`<strong>Pérdida de Contrato</strong><br>Pierdes 10% ingresos netos: -$${ded}.`);
@@ -1055,8 +1047,8 @@ const efectosAmen = [
   },
   // Casilla 51: Multa por Incumplimiento. Pierdes 15% ingresos netos y 1 turno.
   () => {
-    const ded = Math.floor(jugador.empresa.ingresosNetos * 0.15);
-    jugador.empresa.ingresosNetos -= ded;
+    const ded = Math.floor(jugador.empresa.ingresoNeto * 0.15);
+    jugador.empresa.ingresoNeto -= ded;
     jugador.empresa.balance -= ded;
     jugador.turnosPerdidos++;
     actualizarEmpresaDashboard();
@@ -1076,7 +1068,7 @@ const efectosAmen = [
   },
   // Casilla 60: Crisis Mayor. Pierdes 2 turnos y retrocedes al inicio.
   () => {
-    jugador.posicion = 0;
+    jugador.casilla = 0;
     jugador.turnosPerdidos += 2;
     actualizarTablero();
     actualizarEmpresaDashboard();
@@ -1084,7 +1076,7 @@ const efectosAmen = [
   },
   // Casilla 63: Devaluación de Activos. Pierdes 10% margen de ganancia y 1 turno.
   () => {
-    jugador.empresa.margenGanancias *= 0.90;
+    jugador.empresa.margenGanancia *= 0.90;
     jugador.turnosPerdidos++;
     actualizarEmpresaDashboard();
     showOutput(`<strong>Devaluación de Activos</strong><br>Pierdes 10% margen de ganancia y 1 turno.`);
@@ -1103,7 +1095,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   // document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
   // document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
 });
-
 
 
 
