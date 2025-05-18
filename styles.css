@@ -144,6 +144,18 @@ header p {
   min-width: 160px;
 }
 
+#company-metrics {
+  min-width: 180px;
+  max-width: 220px;
+  flex: 1 1 0;
+}
+#output {
+  min-width: 220px;
+  max-width: 320px;
+  flex: 1 1 0;
+  margin-left: 0;
+}
+
 @media (max-width: 900px) {
   #controls .d-flex {
     flex-direction: column;
@@ -153,6 +165,14 @@ header p {
   #controls button {
     min-width: 100px;
     width: 100%;
+  }
+  .d-flex.flex-row.gap-3 {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+  #company-metrics, #output {
+    min-width: 0;
+    max-width: 100%;
   }
 }
 
