@@ -925,18 +925,9 @@ const efectosOpp = [
   },
 ];
 
-// Utilidad: Retroceder casillas y perder la ganancia correspondiente
-function retrocederYCobrarPerdida(cantidad) {
-  if (!jugador || cantidad <= 0) return;
-  const casillasRetrocedidas = Math.min(jugador.casilla, cantidad);
-  const ingresoPerdido = jugador.empresa.calcularIngresoBase(casillasRetrocedidas);
-  jugador.casilla = Math.max(0, jugador.casilla - casillasRetrocedidas);
-  jugador.empresa.ingresoNeto -= ingresoPerdido;
-  if (jugador.empresa.ingresoNeto < 0) jugador.empresa.ingresoNeto = 0;
-  actualizarTablero();
-  actualizarEmpresaDashboard();
-  showOutput(`<strong>Retrocedes ${casillasRetrocedidas} casilla(s)</strong> y pierdes $${ingresoPerdido} de ingresos obtenidos en ese avance.`);
-}
+
+
+
 
 // --- Efectos para Casillas de Amenaza (índices 0–19) ---
 const efectosAmen = [
@@ -964,7 +955,7 @@ const efectosAmen = [
       esperandoDecision = false;
     };
   },
-  // Casilla 6: Retraso Logístico. Retrocedes 1 casilla y pierdes la ganancia de esa casilla.
+  // Casilla 6: Retraso Logístico. Retrocedes 1 casilla. (panel visual)
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
@@ -972,7 +963,7 @@ const efectosAmen = [
         <strong>CASILLA 6: Retraso Logístico</strong><br>
         <em>Un problema inesperado en la cadena de suministro retrasa la entrega de tus productos.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Retrocedes 1 casilla y pierdes la ganancia de esa casilla.</li>
+          <li><b>Efecto:</b> Retrocedes 1 casilla.</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-1" class="btn btn-danger">Aceptar efecto</button>
@@ -980,7 +971,11 @@ const efectosAmen = [
       </div>`;
     esperandoDecision = true;
     document.getElementById('ok-amen-1').onclick = () => {
-      retrocederYCobrarPerdida(1);
+      jugador.casilla = Math.max(0, jugador.casilla - 1);
+      actualizarTablero();
+      actualizarEmpresaDashboard();
+      clearDialog();
+      showOutput(`<strong>Retraso Logístico</strong><br>Retrocedes 1 casilla.`);
       esperandoDecision = false;
     };
   },
@@ -1014,7 +1009,7 @@ const efectosAmen = [
       esperandoDecision = false;
     };
   },
-  // Casilla 12: Fallo en el Sistema de Ventas. Pierdes $5,000 y retrocedes 1 casilla (pierdes ganancia).
+  // Casilla 12: Fallo en el Sistema de Ventas. Pierdes $5,000 y retrocedes 1 casilla.
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
@@ -1022,7 +1017,7 @@ const efectosAmen = [
         <strong>CASILLA 12: FALLO EN EL SISTEMA DE VENTAS</strong><br>
         <em>Un fallo en el sistema de ventas afecta tus operaciones.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Pierdes $5,000 y retrocedes 1 casilla (pierdes la ganancia de esa casilla).</li>
+          <li><b>Efecto:</b> Pierdes $5,000 y retrocedes 1 casilla.</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-3" class="btn btn-danger">Aceptar efecto</button>
@@ -1031,7 +1026,11 @@ const efectosAmen = [
     esperandoDecision = true;
     document.getElementById('ok-amen-3').onclick = () => {
       jugador.empresa.pagarGastos(5000);
-      retrocederYCobrarPerdida(1);
+      jugador.casilla = Math.max(0, jugador.casilla - 1);
+      actualizarTablero();
+      actualizarEmpresaDashboard();
+      clearDialog();
+      showOutput(`<strong>Fallo en el Sistema de Ventas</strong><br>Pierdes $5,000 y retrocedes 1 casilla.`);
       esperandoDecision = false;
     };
   },
@@ -1085,7 +1084,7 @@ const efectosAmen = [
       esperandoDecision = false;
     };
   },
-  // Casilla 22: SANCIÓN POR INCUMPLIMIENTO. Retrocedes 2 casillas y pierdes 3 turnos (pierdes ganancia).
+  // Casilla 22: SANCIÓN POR INCUMPLIMIENTO. RETROCEDES 2 CASILLAS Y PIERDES 3 TURNOS
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
@@ -1093,7 +1092,7 @@ const efectosAmen = [
         <strong>CASILLA 22: SANCIÓN POR INCUMPLIMIENTO</strong><br>
         <em>Una entidad reguladora te multa por no cumplir un requerimiento legal.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Retrocedes 2 casillas y pierdes 3 turnos (pierdes la ganancia de esas casillas).</li>
+          <li><b>Efecto:</b> RETROCEDES 2 CASILLAS Y PIERDES 3 TURNOS</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-6" class="btn btn-danger">Aceptar efecto</button>
@@ -1101,8 +1100,12 @@ const efectosAmen = [
       </div>`;
     esperandoDecision = true;
     document.getElementById('ok-amen-6').onclick = () => {
-      retrocederYCobrarPerdida(2);
+      jugador.casilla = Math.max(0, jugador.casilla - 2);
       jugador.turnosPerdidos += 3;
+      actualizarTablero();
+      actualizarEmpresaDashboard();
+      clearDialog();
+      showOutput(`<strong>SANCIÓN POR INCUMPLIMIENTO</strong><br>Retrocedes 2 casillas y pierdes 3 turnos.`);
       esperandoDecision = false;
     };
   },
@@ -1179,7 +1182,7 @@ const efectosAmen = [
       esperandoDecision = false;
     };
   },
-  // Casilla 35: INCENDIO EN LA PLANTA. Retrocedes 3 casillas y pierdes 3 turnos (pierdes ganancia).
+  // Casilla 35: INCENDIO EN LA PLANTA. RETROCEDES 3 CASILLAS Y PIERDES 3 TURNOS
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
@@ -1187,7 +1190,7 @@ const efectosAmen = [
         <strong>CASILLA 35: INCENDIO EN LA PLANTA</strong><br>
         <em>Un accidente destruye parte de tu infraestructura. Pérdida material considerable.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Retrocedes 3 casillas y pierdes 3 turnos (pierdes la ganancia de esas casillas).</li>
+          <li><b>Efecto:</b> RETROCEDES 3 CASILLAS Y PIERDES 3 TURNOS</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-10" class="btn btn-danger">Aceptar efecto</button>
@@ -1195,8 +1198,12 @@ const efectosAmen = [
       </div>`;
     esperandoDecision = true;
     document.getElementById('ok-amen-10').onclick = () => {
-      retrocederYCobrarPerdida(3);
+      jugador.casilla = Math.max(0, jugador.casilla - 3);
       jugador.turnosPerdidos += 3;
+      actualizarTablero();
+      actualizarEmpresaDashboard();
+      clearDialog();
+      showOutput(`<strong>INCENDIO EN LA PLANTA</strong><br>Retrocedes 3 casillas y pierdes 3 turnos.`);
       esperandoDecision = false;
     };
   },
@@ -1229,7 +1236,7 @@ const efectosAmen = [
       esperandoDecision = false;
     };
   },
-  // Casilla 41: MAQUINARIA DAÑADA. Lanza un dado. Retrocedes ese número y pierdes ganancia.
+  // Casilla 41: MAQUINARIA DAÑADA. Lanza un dado. Retrocedes ese número y pagas $12.000 por cada una.
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
@@ -1237,7 +1244,7 @@ const efectosAmen = [
         <strong>CASILLA 41: MAQUINARIA DAÑADA</strong><br>
         <em>Uno de los equipos clave ya es obsoleto. Requiere reemplazo urgente.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Lanza un dado. Retrocedes ese número de casillas y pagas $12.000 por cada una, perdiendo la ganancia de esas casillas.</li>
+          <li><b>Efecto:</b> Lanza un dado. Retrocedes ese número de casillas y pagas $12.000 por cada una como penalización por la reparación y retraso.</li>
         </ul>
         <div class="mt-3">
           <input type="number" id="dav" class="form-control mb-2" min="1" max="6" placeholder="Dado">
@@ -1248,14 +1255,18 @@ const efectosAmen = [
     document.getElementById('conf-av').onclick = () => {
       const v = parseInt(document.getElementById('dav').value);
       if (isNaN(v) || v < 1 || v > 6) return alert('Ingresa un valor entre 1 y 6.');
+      jugador.casilla = Math.max(0, jugador.casilla - v);
       const costo = v * 12000;
       if (!jugador.empresa.pagarGastos(costo)) {
         clearDialog();
         showOutput('No tienes para pagar la reparación. ¡GAME OVER!');
         gameOver = true;
       } else {
-        retrocederYCobrarPerdida(v);
+        actualizarEmpresaDashboard();
+        clearDialog();
+        showOutput(`<strong>Maquinaria Dañada</strong><br>Retrocedes ${v} casillas y pagas $${costo}.`);
       }
+      actualizarTablero();
       esperandoDecision = false;
     };
   },
@@ -1354,7 +1365,7 @@ const efectosAmen = [
       esperandoDecision = false;
     };
   },
-  // Casilla 57: REGISTRO DE TU MARCA. Pierdes 40% de tus ingresos y retrocedes 5 casillas (pierdes ganancia).
+  // Casilla 57: REGISTRO DE TU MARCA. Pierdes 40% de tus ingresos y retrocedes 5 casillas.
   () => {
     clearDialog();
     document.getElementById('dialog-container').innerHTML = `
@@ -1362,7 +1373,7 @@ const efectosAmen = [
         <strong>CASILLA 57: REGISTRO DE TU MARCA</strong><br>
         <em>No registraste tu marca a tiempo. Una empresa rival lo hace antes que tú. Te exige dejar de usar tu nombre e imagen comercial. Debes rehacer tu identidad de marca y asumir costos legales.</em>
         <ul class="mt-2 mb-2">
-          <li><b>Efecto:</b> Pierdes el 40% de tus ingresos y retrocedes 5 casillas (pierdes la ganancia de esas casillas).</li>
+          <li><b>Efecto:</b> Pierdes el 40% de tus ingresos y retrocedes 5 casillas.</li>
         </ul>
         <div class="mt-3">
           <button id="ok-amen-18" class="btn btn-danger">Aceptar efecto</button>
@@ -1371,7 +1382,11 @@ const efectosAmen = [
     esperandoDecision = true;
     document.getElementById('ok-amen-18').onclick = () => {
       jugador.empresa.ingresoNeto = Math.floor(jugador.empresa.ingresoNeto * 0.6);
-      retrocederYCobrarPerdida(5);
+      jugador.casilla = Math.max(0, jugador.casilla - 5);
+      actualizarTablero();
+      actualizarEmpresaDashboard();
+      clearDialog();
+      showOutput(`<strong>Registro de tu marca</strong><br>Pierdes el 40% de tus ingresos y retrocedes 5 casillas.`);
       esperandoDecision = false;
     };
   },
@@ -1448,7 +1463,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   // document.getElementById('btn-random-dice').addEventListener('click',()=>document.getElementById('dado').value=Math.ceil(Math.random()*6));
   // document.getElementById('btn-clear-log').addEventListener('click',()=>showOutput(''));
 });
-
 
 
 
